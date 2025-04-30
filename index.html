@@ -6,13 +6,17 @@
   <title>Bible Reading Tracker</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
+    html, body {
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
     #sideNav {
-      top: 64px; /* or match your header height */
+      top: 64px;
     }
     .chapter-grid {
-    box-shadow: 0 0 10px rgba(0,0,0,0.08);
-    border-radius: 0.5rem;
-  }
+      box-shadow: 0 0 10px rgba(0,0,0,0.08);
+      border-radius: 0.5rem;
+    }
   </style>
 </head>
 <body class="bg-white text-stone-700 font-[system-ui,sf-pro-text,-apple-system,BlinkMacSystemFont,sans-serif] min-h-screen flex flex-col relative">
@@ -28,7 +32,7 @@
     <img src="day-by-grace-logo-horizontal3.png" alt="Day by Grace Logo Header" class="h-10 max-h-12 ml-auto" />
   </header>
 
-  <!-- Side Panel (overlay, below header) -->
+  <!-- Side Panel -->
   <div id="sideNav" class="fixed left-0 top-[64px] w-64 bg-[#BD6221] text-[#FDEFCC] hidden z-50 shadow-md h-screen">
     <div class="p-4 font-bold text-lg">Navigation</div>
     <ul class="space-y-3 px-4">
@@ -40,10 +44,10 @@
     </ul>
   </div>
 
-  <!-- Main -->
-  <main class="p-4 max-w-7xl mx-auto relative z-0">
-  <div id="bibleTracker" class="space-y-6 relative"></div>
-</main>
+  <!-- Main Content -->
+  <main class="p-4 max-w-7xl mx-auto relative z-0 overflow-x-visible overflow-y-visible">
+    <div id="bibleTracker" class="space-y-6 relative"></div>
+  </main>
 
   <!-- Footer -->
   <footer class="text-center text-sm text-[#777060] mt-10 py-4">
