@@ -1,55 +1,55 @@
+
 let koreanAudioLinks = {};
 
 fetch('koreanAudioLinks.json')
   .then(response => response.json())
   .then(data => {
     koreanAudioLinks = data;
-    renderBibleTracker();  // <-- call your render/init function here
+    renderBibleTracker();
   })
   .catch(err => {
-  console.error("Failed to load koreanAudioLinks.json", err);
-  renderBibleTracker(); // fallback
-});
-
-
-const bibleSections = {
-  "Torah (Law)": {
-    Genesis: 50, Exodus: 40, Leviticus: 27, Numbers: 36, Deuteronomy: 34
-  },
-  "History": {
-    Joshua: 24, Judges: 21, Ruth: 4, "1 Samuel": 31, "2 Samuel": 24,
-    "1 Kings": 22, "2 Kings": 25, "1 Chronicles": 29, "2 Chronicles": 36,
-    Ezra: 10, Nehemiah: 13, Esther: 10
-  },
-  "Wisdom": {
-    Job: 42, Psalms: 150, Proverbs: 31, Ecclesiastes: 12, "Song of Solomon": 8
-  },
-  "Major Prophets": {
-    Isaiah: 66, Jeremiah: 52, Lamentations: 5, Ezekiel: 48, Daniel: 12
-  },
-  "Minor Prophets": {
-    Hosea: 14, Joel: 3, Amos: 9, Obadiah: 1, Jonah: 4, Micah: 7,
-    Nahum: 3, Habakkuk: 3, Zephaniah: 3, Haggai: 2, Zechariah: 14, Malachi: 4
-  },
-  "Gospels & Acts": {
-    Matthew: 28, Mark: 16, Luke: 24, John: 21, Acts: 28
-  },
-  "Letters": {
-    Romans: 16, "1 Corinthians": 16, "2 Corinthians": 13, Galatians: 6,
-    Ephesians: 6, Philippians: 4, Colossians: 4, "1 Thessalonians": 5,
-    "2 Thessalonians": 3, "1 Timothy": 6, "2 Timothy": 4, Titus: 3,
-    Philemon: 1, Hebrews: 13, James: 5, "1 Peter": 5, "2 Peter": 3,
-    "1 John": 5, "2 John": 1, "3 John": 1, Jude: 1
-  },
-  "Revelation": {
-    Revelation: 22
-  }
-};
-
+    console.error("Failed to load koreanAudioLinks.json", err);
+    renderBibleTracker();
+  });
 
 function renderBibleTracker() {
+  const bibleSections = {
+    "Torah (Law)": {
+      Genesis: 50, Exodus: 40, Leviticus: 27, Numbers: 36, Deuteronomy: 34
+    },
+    "History": {
+      Joshua: 24, Judges: 21, Ruth: 4, "1 Samuel": 31, "2 Samuel": 24,
+      "1 Kings": 22, "2 Kings": 25, "1 Chronicles": 29, "2 Chronicles": 36,
+      Ezra: 10, Nehemiah: 13, Esther: 10
+    },
+    "Wisdom": {
+      Job: 42, Psalms: 150, Proverbs: 31, Ecclesiastes: 12, "Song of Solomon": 8
+    },
+    "Major Prophets": {
+      Isaiah: 66, Jeremiah: 52, Lamentations: 5, Ezekiel: 48, Daniel: 12
+    },
+    "Minor Prophets": {
+      Hosea: 14, Joel: 3, Amos: 9, Obadiah: 1, Jonah: 4, Micah: 7,
+      Nahum: 3, Habakkuk: 3, Zephaniah: 3, Haggai: 2, Zechariah: 14, Malachi: 4
+    },
+    "Gospels & Acts": {
+      Matthew: 28, Mark: 16, Luke: 24, John: 21, Acts: 28
+    },
+    "Letters": {
+      Romans: 16, "1 Corinthians": 16, "2 Corinthians": 13, Galatians: 6,
+      Ephesians: 6, Philippians: 4, Colossians: 4, "1 Thessalonians": 5,
+      "2 Thessalonians": 3, "1 Timothy": 6, "2 Timothy": 4, Titus: 3,
+      Philemon: 1, Hebrews: 13, James: 5, "1 Peter": 5, "2 Peter": 3,
+      "1 John": 5, "2 John": 1, "3 John": 1, Jude: 1
+    },
+    "Revelation": {
+      Revelation: 22
+    }
+  };
+
   const container = document.getElementById("bibleTracker");
-  container.innerHTML = ""; // clear if rerendering
+  if (!container) return;
+  container.innerHTML = "";
 
   Object.entries(bibleSections).forEach(([sectionName, books]) => {
     const sectionContainer = document.createElement("div");
@@ -87,6 +87,7 @@ function renderBibleTracker() {
         checkbox.id = `${book}-ch-${i}`;
         checkbox.className = "accent-[#777060]";
         checkbox.addEventListener("change", () => {
+          updateProgress(book, chapters);
           saveReadingProgress(book, i, checkbox.checked);
         });
 
@@ -95,7 +96,6 @@ function renderBibleTracker() {
         label.className = "text-sm";
         label.innerHTML = `Chapter ${i} ${createChapterLinks(book, i)}`;
 
-        // Restore saved state
         const saved = localStorage.getItem(`read:${book}:${i}`);
         if (saved === "true") checkbox.checked = true;
 
@@ -107,20 +107,21 @@ function renderBibleTracker() {
       section.appendChild(header);
       section.appendChild(chapterList);
       booksWrapper.appendChild(section);
+      sectionContainer.appendChild(booksWrapper);
       updateProgress(book, chapters);
     });
 
-    sectionContainer.appendChild(booksWrapper);
     container.appendChild(sectionContainer);
   });
 }
 
-
 function updateProgress(book, total) {
+  const el = document.getElementById(`progress-${book}`);
+  if (!el) return;
   const checkboxes = document.querySelectorAll(`#bibleTracker input[id^="${book}-ch-"]`);
   const checked = [...checkboxes].filter(c => c.checked).length;
   const percent = Math.round((checked / total) * 100);
-  document.getElementById(`progress-${book}`).textContent = `${percent}%`;
+  el.textContent = `${percent}%`;
 }
 
 function saveReadingProgress(book, chapter, value) {
@@ -132,16 +133,14 @@ function toggleNav() {
   nav.classList.toggle("-translate-x-full");
 }
 
-// Example section toggle function
 function goTo(section) {
-  alert(`Go to: ${section} (swap content here)`);
+  alert(`Go to: ${section}`);
   toggleNav();
 }
 
 function createChapterLinks(book, chapter) {
   const esvLink = `https://www.esv.org/${book.replace(/\s+/g, '+')}+${chapter}/`;
   const koreanLink = koreanAudioLinks?.[book]?.[chapter];
-
   return `
     <span class="ml-2 text-sm">
       <a href="${esvLink}" target="_blank" class="text-blue-600 underline">📖</a>
