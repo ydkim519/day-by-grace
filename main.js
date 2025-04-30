@@ -66,15 +66,17 @@ function renderBibleTracker() {
 
   Object.entries(bibleSections).forEach(([sectionName, books]) => {
     const sectionContainer = document.createElement("div");
-    sectionContainer.className = "mb-8";
+    sectionContainer.className = "mb-10";
 
     const sectionHeader = document.createElement("h2");
     sectionHeader.className = "text-xl font-bold mb-4 text-[#BD6221]";
     sectionHeader.textContent = sectionName;
     sectionContainer.appendChild(sectionHeader);
 
-    const booksWrapper = document.createElement("div");
-    booksWrapper.className = "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6";
+    const booksRow = document.createElement("div");
+    booksRow.className = "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6";
+
+    let expandedPanel = null;
 
     Object.entries(books).forEach(([book, chapters]) => {
       const bookCard = document.createElement("div");
@@ -84,73 +86,77 @@ function renderBibleTracker() {
       header.className = "text-lg font-semibold cursor-pointer flex justify-between items-center text-[#777060]";
       header.innerHTML = `<span>${book}</span><span id="progress-${book}">0%</span>`;
 
-      const chapterGrid = document.createElement("div");
-      chapterGrid.className = "mt-4 hidden bg-white border-t border-[#ccc] p-4 z-10 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 chapter-grid";
-
       header.addEventListener("click", () => {
-        const isOpen = !chapterGrid.classList.contains("hidden");
-        document.querySelectorAll(".chapter-grid").forEach(grid => grid.classList.add("hidden"));
-        if (!isOpen) chapterGrid.classList.remove("hidden");
+        if (expandedPanel) expandedPanel.remove();
+        const panel = renderChapterPanel(book, chapters);
+        booksRow.after(panel);
+        expandedPanel = panel;
       });
 
-      for (let i = 1; i <= chapters; i++) {
-        const key = `read:${book}:${i}`;
-        const isRead = localStorage.getItem(key) === "true";
-
-        const box = document.createElement("div");
-        box.className = `flex items-center justify-between px-2 py-1 rounded border text-sm transition duration-150 hover:shadow-md cursor-pointer ${
-          isRead ? "bg-[#BD6221] text-[#FDEFCC]" : "bg-white text-[#777060]"
-        }`;
-
-        box.onclick = (e) => {
-          if (e.target.tagName === "A") return;
-          const nowRead = !box.classList.contains("bg-[#BD6221]");
-          box.classList.toggle("bg-[#BD6221]", nowRead);
-          box.classList.toggle("text-[#FDEFCC]", nowRead);
-          localStorage.setItem(key, nowRead ? "true" : "false");
-          updateProgress(book, chapters);
-        };
-
-        const label = document.createElement("span");
-        label.textContent = i;
-        label.className = "text-base font-medium";
-
-        const right = document.createElement("div");
-        right.className = "flex gap-1 items-center ml-1";
-
-        const esv = document.createElement("a");
-        esv.href = `https://www.esv.org/${book.replace(/\s+/g, '+')}+${i}/`;
-        esv.target = "_blank";
-        esv.innerHTML = "📖";
-
-        right.appendChild(esv);
-
-        const audio = koreanAudioLinks?.[book]?.[i];
-        if (audio) {
-          const link = document.createElement("a");
-          link.href = audio;
-          link.target = "_blank";
-          link.innerHTML = "🎧";
-          right.appendChild(link);
-        }
-
-        box.appendChild(label);
-        box.appendChild(right);
-        chapterGrid.appendChild(box);
-      }
-
       bookCard.appendChild(header);
-      bookCard.appendChild(chapterGrid);
-      booksWrapper.appendChild(bookCard);
-      sectionContainer.appendChild(booksWrapper);
-      container.appendChild(sectionContainer);
-      updateProgress(book, chapters);
+      booksRow.appendChild(bookCard);
     });
+
+    sectionContainer.appendChild(booksRow);
+    container.appendChild(sectionContainer);
   });
 }
 
+function renderChapterPanel(book, chapters) {
+  const panel = document.createElement("div");
+  panel.className = "w-full bg-white border rounded shadow p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 mt-4";
+
+  for (let i = 1; i <= chapters; i++) {
+    const key = `read:${book}:${i}`;
+    const isRead = localStorage.getItem(key) === "true";
+
+    const box = document.createElement("div");
+    box.className = `flex items-center justify-between px-2 py-1 rounded border text-sm transition duration-150 hover:shadow-md cursor-pointer ${
+      isRead ? "bg-[#BD6221] text-[#FDEFCC]" : "bg-white text-[#777060]"
+    }`;
+
+    box.onclick = (e) => {
+      if (e.target.tagName === "A") return;
+      const nowRead = !box.classList.contains("bg-[#BD6221]");
+      box.classList.toggle("bg-[#BD6221]", nowRead);
+      box.classList.toggle("text-[#FDEFCC]", nowRead);
+      localStorage.setItem(key, nowRead ? "true" : "false");
+      updateProgress(book, chapters);
+    };
+
+    const label = document.createElement("span");
+    label.textContent = i;
+    label.className = "text-base font-medium";
+
+    const right = document.createElement("div");
+    right.className = "flex gap-1 items-center ml-1";
+
+    const esv = document.createElement("a");
+    esv.href = `https://www.esv.org/${book.replace(/\s+/g, '+')}+${i}/`;
+    esv.target = "_blank";
+    esv.innerHTML = "📖";
+
+    right.appendChild(esv);
+
+    const audio = koreanAudioLinks?.[book]?.[i];
+    if (audio) {
+      const link = document.createElement("a");
+      link.href = audio;
+      link.target = "_blank";
+      link.innerHTML = "🎧";
+      right.appendChild(link);
+    }
+
+    box.appendChild(label);
+    box.appendChild(right);
+    panel.appendChild(box);
+  }
+
+  return panel;
+}
+
 function updateProgress(book, total) {
-  const boxes = document.querySelectorAll(`#progress-${book} ~ div .bg-[#BD6221]`);
+  const boxes = document.querySelectorAll(`.chapter-grid .bg-[#BD6221]`);
   const count = boxes.length;
   const percent = Math.round((count / total) * 100);
   const el = document.getElementById(`progress-${book}`);
