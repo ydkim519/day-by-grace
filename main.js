@@ -73,16 +73,19 @@ function renderBibleTracker() {
     sectionHeader.textContent = sectionName;
     sectionContainer.appendChild(sectionHeader);
 
+    const booksWrapper = document.createElement("div");
+    booksWrapper.className = "flex flex-wrap gap-6";
+
     Object.entries(books).forEach(([book, chapters]) => {
       const bookCard = document.createElement("div");
-      bookCard.className = "border rounded-lg shadow p-4 w-full mb-4 bg-white";
+      bookCard.className = "border rounded-lg shadow p-4 w-full md:w-[48%] lg:w-[32%] bg-white";
 
       const header = document.createElement("h3");
       header.className = "text-lg font-semibold cursor-pointer flex justify-between items-center text-[#777060]";
       header.innerHTML = `<span>${book}</span><span id="progress-${book}">0%</span>`;
 
       const chapterGrid = document.createElement("div");
-      chapterGrid.className = "mt-4 hidden grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 chapter-grid";
+      chapterGrid.className = "mt-4 hidden grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 chapter-grid";
 
       header.addEventListener("click", () => {
         const alreadyOpen = !chapterGrid.classList.contains("hidden");
@@ -95,34 +98,35 @@ function renderBibleTracker() {
         const isRead = localStorage.getItem(key) === "true";
 
         const box = document.createElement("div");
-        box.className = `flex items-center justify-between px-3 py-2 rounded border text-sm transition duration-150 ${isRead ? "bg-[#BD6221] text-[#FDEFCC]" : "bg-white text-[#777060]"} hover:shadow-md`;
-        box.classList.add("cursor-pointer");
+        box.className = `flex items-center justify-between px-3 py-2 rounded border text-sm transition duration-150 ${isRead ? "bg-[#BD6221] text-[#FDEFCC]" : "bg-white text-[#777060]"} hover:shadow-md cursor-pointer`;
 
         const left = document.createElement("div");
         left.className = "flex items-center gap-2";
 
         const check = document.createElement("span");
         check.innerHTML = "✔️";
-        check.style.color = isRead ? "#FDEFCC" : "#777060";
+        check.style.color = isRead ? "#FDEFCC" : "#16a34a"; // green for unread
+        check.className = "text-base";
 
         check.onclick = (e) => {
           e.stopPropagation();
           const nowRead = !box.classList.contains("bg-[#BD6221]");
           box.classList.toggle("bg-[#BD6221]", nowRead);
           box.classList.toggle("text-[#FDEFCC]", nowRead);
-          check.style.color = nowRead ? "#FDEFCC" : "#777060";
+          check.style.color = nowRead ? "#FDEFCC" : "#16a34a";
           localStorage.setItem(key, nowRead ? "true" : "false");
           updateProgress(book, chapters);
         };
 
         const label = document.createElement("span");
         label.textContent = i;
+        label.className = "text-base font-medium";
 
         left.appendChild(check);
         left.appendChild(label);
 
         const right = document.createElement("div");
-        right.className = "flex gap-1 items-center";
+        right.className = "flex gap-2 items-center ml-2";
 
         const esv = document.createElement("a");
         esv.href = `https://www.esv.org/${book.replace(/\s+/g, '+')}+${i}/`;
@@ -147,9 +151,11 @@ function renderBibleTracker() {
 
       bookCard.appendChild(header);
       bookCard.appendChild(chapterGrid);
-      sectionContainer.appendChild(bookCard);
+      booksWrapper.appendChild(bookCard);
+      updateProgress(book, chapters);
     });
 
+    sectionContainer.appendChild(booksWrapper);
     container.appendChild(sectionContainer);
   });
 }
@@ -157,9 +163,9 @@ function renderBibleTracker() {
 function updateProgress(book, total) {
   const el = document.getElementById(`progress-${book}`);
   if (!el) return;
-  const boxes = document.querySelectorAll(`[id^='${book}-ch-']`);
-  const checked = [...document.querySelectorAll(`.chapter-grid .bg-[#BD6221]`)].length;
-  const percent = Math.round((checked / total) * 100);
+  const boxes = document.querySelectorAll(`.chapter-grid .bg-[#BD6221]`);
+  const count = [...boxes].length;
+  const percent = Math.round((count / total) * 100);
   el.textContent = `${percent}%`;
 }
 
