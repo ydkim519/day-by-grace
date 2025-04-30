@@ -66,99 +66,90 @@ function renderBibleTracker() {
 
   Object.entries(bibleSections).forEach(([sectionName, books]) => {
     const sectionContainer = document.createElement("div");
-    sectionContainer.className = "mb-6";
+    sectionContainer.className = "mb-8";
 
     const sectionHeader = document.createElement("h2");
-    sectionHeader.className = "text-xl font-bold mb-2 text-[#BD6221]";
+    sectionHeader.className = "text-xl font-bold mb-4 text-[#BD6221]";
     sectionHeader.textContent = sectionName;
     sectionContainer.appendChild(sectionHeader);
 
-    const booksWrapper = document.createElement("div");
-    booksWrapper.className = "flex flex-wrap gap-4";
-
     Object.entries(books).forEach(([book, chapters]) => {
       const bookCard = document.createElement("div");
-      bookCard.className = "border rounded-lg shadow p-4 w-64";
+      bookCard.className = "border rounded-lg shadow p-4 w-full mb-4 bg-white";
 
       const header = document.createElement("h3");
       header.className = "text-lg font-semibold cursor-pointer flex justify-between items-center text-[#777060]";
       header.innerHTML = `<span>${book}</span><span id="progress-${book}">0%</span>`;
 
       const chapterGrid = document.createElement("div");
-      chapterGrid.className = "mt-3 hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 chapter-grid";
+      chapterGrid.className = "mt-4 hidden grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 chapter-grid";
 
       header.addEventListener("click", () => {
-        document.querySelectorAll(".chapter-grid").forEach(grid => {
-          if (grid !== chapterGrid) grid.classList.add("hidden");
-        });
-        chapterGrid.classList.toggle("hidden");
+        const alreadyOpen = !chapterGrid.classList.contains("hidden");
+        document.querySelectorAll(".chapter-grid").forEach(grid => grid.classList.add("hidden"));
+        if (!alreadyOpen) chapterGrid.classList.remove("hidden");
       });
 
       for (let i = 1; i <= chapters; i++) {
-        const box = document.createElement("div");
-        box.className = "flex items-center justify-between border rounded px-2 py-1 text-sm transition duration-150 hover:shadow cursor-pointer";
-        box.classList.add("flex-wrap", "min-h-[40px]");
-
         const key = `read:${book}:${i}`;
         const isRead = localStorage.getItem(key) === "true";
 
-        if (isRead) {
-          box.classList.add("bg-[#BD6221]", "text-[#FDEFCC]");
-        } else {
-          box.classList.add("bg-white", "text-[#777060]");
-        }
+        const box = document.createElement("div");
+        box.className = `flex items-center justify-between px-3 py-2 rounded border text-sm transition duration-150 ${isRead ? "bg-[#BD6221] text-[#FDEFCC]" : "bg-white text-[#777060]"} hover:shadow-md`;
+        box.classList.add("cursor-pointer");
 
-        const leftSide = document.createElement("div");
-        leftSide.className = "flex items-center gap-1";
+        const left = document.createElement("div");
+        left.className = "flex items-center gap-2";
+
         const check = document.createElement("span");
-        check.innerHTML = isRead ? "✔️" : "◻️";
-        check.className = "cursor-pointer";
+        check.innerHTML = "✔️";
+        check.style.color = isRead ? "#FDEFCC" : "#777060";
+
         check.onclick = (e) => {
           e.stopPropagation();
           const nowRead = !box.classList.contains("bg-[#BD6221]");
           box.classList.toggle("bg-[#BD6221]", nowRead);
           box.classList.toggle("text-[#FDEFCC]", nowRead);
-          check.innerHTML = nowRead ? "✔️" : "◻️";
+          check.style.color = nowRead ? "#FDEFCC" : "#777060";
           localStorage.setItem(key, nowRead ? "true" : "false");
           updateProgress(book, chapters);
         };
 
         const label = document.createElement("span");
         label.textContent = i;
-        leftSide.appendChild(check);
-        leftSide.appendChild(label);
 
-        const linkWrap = document.createElement("span");
-        linkWrap.className = "space-x-1 flex items-center";
+        left.appendChild(check);
+        left.appendChild(label);
 
-        const esvLink = document.createElement("a");
-        esvLink.href = `https://www.esv.org/${book.replace(/\s+/g, '+')}+${i}/`;
-        esvLink.target = "_blank";
-        esvLink.innerHTML = "📖";
+        const right = document.createElement("div");
+        right.className = "flex gap-1 items-center";
 
-        const audioLink = koreanAudioLinks?.[book]?.[i];
-        if (audioLink) {
-          const yt = document.createElement("a");
-          yt.href = audioLink;
-          yt.target = "_blank";
-          yt.innerHTML = "🎧";
-          linkWrap.appendChild(yt);
+        const esv = document.createElement("a");
+        esv.href = `https://www.esv.org/${book.replace(/\s+/g, '+')}+${i}/`;
+        esv.target = "_blank";
+        esv.innerHTML = "📖";
+
+        right.appendChild(esv);
+
+        const audio = koreanAudioLinks?.[book]?.[i];
+        if (audio) {
+          const link = document.createElement("a");
+          link.href = audio;
+          link.target = "_blank";
+          link.innerHTML = "🎧";
+          right.appendChild(link);
         }
 
-        linkWrap.appendChild(esvLink);
-
-        box.appendChild(leftSide);
-        box.appendChild(linkWrap);
+        box.appendChild(left);
+        box.appendChild(right);
         chapterGrid.appendChild(box);
       }
 
       bookCard.appendChild(header);
       bookCard.appendChild(chapterGrid);
-      booksWrapper.appendChild(bookCard);
-      updateProgress(book, chapters);
+      sectionContainer.appendChild(bookCard);
     });
 
-    sectionContainer.appendChild(booksWrapper);
     container.appendChild(sectionContainer);
   });
 }
@@ -166,8 +157,8 @@ function renderBibleTracker() {
 function updateProgress(book, total) {
   const el = document.getElementById(`progress-${book}`);
   if (!el) return;
-  const boxes = document.querySelectorAll(`[data-book='${book}']`);
-  const checked = [...document.querySelectorAll(`input[id^='${book}-ch-']`)].filter(i => i.checked).length;
+  const boxes = document.querySelectorAll(`[id^='${book}-ch-']`);
+  const checked = [...document.querySelectorAll(`.chapter-grid .bg-[#BD6221]`)].length;
   const percent = Math.round((checked / total) * 100);
   el.textContent = `${percent}%`;
 }
