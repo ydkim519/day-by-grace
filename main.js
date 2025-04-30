@@ -5,11 +5,11 @@ fetch('koreanAudioLinks.json')
   .then(response => response.json())
   .then(data => {
     koreanAudioLinks = propagateAudioLinks(data);
-    renderBibleTracker();
+    renderBibleGroups();
   })
   .catch(err => {
     console.error("Failed to load koreanAudioLinks.json", err);
-    renderBibleTracker();
+    renderBibleGroups();
   });
 
 function propagateAudioLinks(links) {
@@ -25,107 +25,103 @@ function propagateAudioLinks(links) {
   return propagated;
 }
 
-let openPanelWrapper = null;
+const bibleSections = {
+  "Torah (Law)": {
+    Genesis: 50, Exodus: 40, Leviticus: 27, Numbers: 36, Deuteronomy: 34
+  },
+  "History": {
+    Joshua: 24, Judges: 21, Ruth: 4, "1 Samuel": 31, "2 Samuel": 24,
+    "1 Kings": 22, "2 Kings": 25, "1 Chronicles": 29, "2 Chronicles": 36,
+    Ezra: 10, Nehemiah: 13, Esther: 10
+  },
+  "Wisdom": {
+    Job: 42, Psalms: 150, Proverbs: 31, Ecclesiastes: 12, "Song of Solomon": 8
+  },
+  "Major Prophets": {
+    Isaiah: 66, Jeremiah: 52, Lamentations: 5, Ezekiel: 48, Daniel: 12
+  },
+  "Minor Prophets": {
+    Hosea: 14, Joel: 3, Amos: 9, Obadiah: 1, Jonah: 4, Micah: 7,
+    Nahum: 3, Habakkuk: 3, Zephaniah: 3, Haggai: 2, Zechariah: 14, Malachi: 4
+  },
+  "Gospels & Acts": {
+    Matthew: 28, Mark: 16, Luke: 24, John: 21, Acts: 28
+  },
+  "Letters": {
+    Romans: 16, "1 Corinthians": 16, "2 Corinthians": 13, Galatians: 6,
+    Ephesians: 6, Philippians: 4, Colossians: 4, "1 Thessalonians": 5,
+    "2 Thessalonians": 3, "1 Timothy": 6, "2 Timothy": 4, Titus: 3,
+    Philemon: 1, Hebrews: 13, James: 5, "1 Peter": 5, "2 Peter": 3,
+    "1 John": 5, "2 John": 1, "3 John": 1, Jude: 1
+  },
+  "Revelation": {
+    Revelation: 22
+  }
+};
 
-function renderBibleTracker() {
-  const bibleSections = {
-    "Torah (Law)": {
-      Genesis: 50, Exodus: 40, Leviticus: 27, Numbers: 36, Deuteronomy: 34
-    },
-    "History": {
-      Joshua: 24, Judges: 21, Ruth: 4, "1 Samuel": 31, "2 Samuel": 24,
-      "1 Kings": 22, "2 Kings": 25, "1 Chronicles": 29, "2 Chronicles": 36,
-      Ezra: 10, Nehemiah: 13, Esther: 10
-    },
-    "Wisdom": {
-      Job: 42, Psalms: 150, Proverbs: 31, Ecclesiastes: 12, "Song of Solomon": 8
-    },
-    "Major Prophets": {
-      Isaiah: 66, Jeremiah: 52, Lamentations: 5, Ezekiel: 48, Daniel: 12
-    },
-    "Minor Prophets": {
-      Hosea: 14, Joel: 3, Amos: 9, Obadiah: 1, Jonah: 4, Micah: 7,
-      Nahum: 3, Habakkuk: 3, Zephaniah: 3, Haggai: 2, Zechariah: 14, Malachi: 4
-    },
-    "Gospels & Acts": {
-      Matthew: 28, Mark: 16, Luke: 24, John: 21, Acts: 28
-    },
-    "Letters": {
-      Romans: 16, "1 Corinthians": 16, "2 Corinthians": 13, Galatians: 6,
-      Ephesians: 6, Philippians: 4, Colossians: 4, "1 Thessalonians": 5,
-      "2 Thessalonians": 3, "1 Timothy": 6, "2 Timothy": 4, Titus: 3,
-      Philemon: 1, Hebrews: 13, James: 5, "1 Peter": 5, "2 Peter": 3,
-      "1 John": 5, "2 John": 1, "3 John": 1, Jude: 1
-    },
-    "Revelation": {
-      Revelation: 22
-    }
-  };
-
+function renderBibleGroups() {
   const container = document.getElementById("bibleTracker");
-  if (!container) return;
   container.innerHTML = "";
 
   Object.entries(bibleSections).forEach(([sectionName, books]) => {
-    const sectionContainer = document.createElement("div");
-    sectionContainer.className = "mb-10";
+    const section = document.createElement("div");
+    section.className = "mb-6";
 
-    const sectionHeader = document.createElement("h2");
-    sectionHeader.className = "text-xl font-bold mb-4 text-[#BD6221]";
-    sectionHeader.textContent = sectionName;
-    sectionContainer.appendChild(sectionHeader);
+    const toggleBtn = document.createElement("h2");
+    toggleBtn.className = "text-xl font-bold mb-2 cursor-pointer text-[#BD6221]";
+    toggleBtn.textContent = sectionName;
 
-    const booksWrapper = document.createElement("div");
-    booksWrapper.className = "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6";
-    sectionContainer.appendChild(booksWrapper);
-    container.appendChild(sectionContainer);
+    const bookList = document.createElement("div");
+    bookList.className = "flex flex-col gap-2 ml-4 hidden";
+
+    toggleBtn.addEventListener("click", () => {
+      bookList.classList.toggle("hidden");
+    });
 
     Object.entries(books).forEach(([book, chapters]) => {
-      const wrapper = document.createElement("div");
+      const card = document.createElement("div");
+      card.className = "border p-3 rounded cursor-pointer hover:shadow flex justify-between items-center";
+      card.innerHTML = `<span class="font-semibold text-[#777060]">${book}</span><span id="progress-${book}" class="text-sm">0%</span>`;
 
-      const bookCard = document.createElement("div");
-      bookCard.className = "border rounded-lg shadow p-4 bg-white";
-
-      const header = document.createElement("h3");
-      header.className = "text-lg font-semibold cursor-pointer flex justify-between items-center text-[#777060]";
-      header.innerHTML = `<span>${book}</span><span id="progress-${book}">0%</span>`;
-      bookCard.appendChild(header);
-
-      const panelWrapper = document.createElement("div");
-      panelWrapper.className = "col-span-full";
-
-      const panel = renderChapterPanel(book, chapters);
-      panel.classList.add("hidden");
-      panelWrapper.appendChild(panel);
-
-      header.addEventListener("click", () => {
-        if (openPanelWrapper && openPanelWrapper !== panelWrapper) {
-          openPanelWrapper.querySelector("div").classList.add("hidden");
-        }
-        const isOpen = !panel.classList.contains("hidden");
-        panel.classList.toggle("hidden", isOpen);
-        openPanelWrapper = isOpen ? null : panelWrapper;
+      card.addEventListener("click", () => {
+        openRightPanel(book, chapters);
       });
 
-      wrapper.appendChild(bookCard);
-      booksWrapper.appendChild(wrapper);
-      booksWrapper.appendChild(panelWrapper);
-
+      bookList.appendChild(card);
       updateProgress(book, chapters);
     });
+
+    section.appendChild(toggleBtn);
+    section.appendChild(bookList);
+    container.appendChild(section);
   });
+
+  createRightPanelContainer();
 }
 
-function renderChapterPanel(book, chapters) {
+function createRightPanelContainer() {
+  let existing = document.getElementById("chapterPanel");
+  if (existing) existing.remove();
+
   const panel = document.createElement("div");
-  panel.className = "w-full bg-white border rounded shadow p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 mt-4 chapter-grid";
+  panel.id = "chapterPanel";
+  panel.className = "fixed top-20 right-0 w-full max-w-md h-full bg-white border-l shadow-lg p-4 overflow-y-auto transform translate-x-full transition-transform duration-300 z-50";
+  document.body.appendChild(panel);
+}
+
+function openRightPanel(book, chapters) {
+  const panel = document.getElementById("chapterPanel");
+  panel.innerHTML = `<h2 class="text-xl font-bold mb-4 text-[#BD6221]">${book}</h2>`;
+
+  const grid = document.createElement("div");
+  grid.className = "grid grid-cols-2 sm:grid-cols-3 gap-2";
 
   for (let i = 1; i <= chapters; i++) {
     const key = `read:${book}:${i}`;
     const isRead = localStorage.getItem(key) === "true";
 
     const box = document.createElement("div");
-    box.className = "flex items-center justify-between px-2 py-1 rounded border text-sm transition duration-150 hover:shadow-md cursor-pointer";
+    box.className = "flex justify-between items-center p-2 rounded border cursor-pointer text-sm transition";
     updateBoxStyle(box, isRead);
 
     box.onclick = (e) => {
@@ -138,17 +134,16 @@ function renderChapterPanel(book, chapters) {
 
     const label = document.createElement("span");
     label.textContent = i;
-    label.className = "text-base font-medium";
 
-    const right = document.createElement("div");
-    right.className = "flex gap-1 items-center ml-1";
+    const links = document.createElement("div");
+    links.className = "flex gap-1 items-center ml-2";
 
     const esv = document.createElement("a");
     esv.href = `https://www.esv.org/${book.replace(/\s+/g, '+')}+${i}/`;
     esv.target = "_blank";
     esv.innerHTML = "📖";
 
-    right.appendChild(esv);
+    links.appendChild(esv);
 
     const audio = koreanAudioLinks?.[book]?.[i];
     if (audio) {
@@ -156,15 +151,16 @@ function renderChapterPanel(book, chapters) {
       link.href = audio;
       link.target = "_blank";
       link.innerHTML = "🎧";
-      right.appendChild(link);
+      links.appendChild(link);
     }
 
     box.appendChild(label);
-    box.appendChild(right);
-    panel.appendChild(box);
+    box.appendChild(links);
+    grid.appendChild(box);
   }
 
-  return panel;
+  panel.appendChild(grid);
+  panel.classList.remove("translate-x-full");
 }
 
 function updateBoxStyle(box, isRead) {
@@ -185,22 +181,4 @@ function updateProgress(book, total) {
   const percent = Math.round((count / total) * 100);
   const el = document.getElementById(`progress-${book}`);
   if (el) el.textContent = `${percent}%`;
-}
-
-function toggleNav() {
-  const nav = document.getElementById("sideNav");
-  nav.classList.toggle("hidden");
-}
-
-document.addEventListener("click", function(e) {
-  const nav = document.getElementById("sideNav");
-  const btn = e.target.closest("button");
-  if (!nav.contains(e.target) && !btn && !nav.classList.contains("hidden")) {
-    nav.classList.add("hidden");
-  }
-});
-
-function goTo(section) {
-  alert(`Go to: ${section}`);
-  toggleNav();
 }
