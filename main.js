@@ -1,3 +1,13 @@
+let koreanAudioLinks = {};
+
+fetch('koreanAudioLinks.json')
+  .then(response => response.json())
+  .then(data => {
+    koreanAudioLinks = data;
+    renderBibleTracker();  // <-- call your render/init function here
+  })
+  .catch(err => console.error("Failed to load koreanAudioLinks.json", err));
+
 const books = {
   Genesis: 50, Exodus: 40, Leviticus: 27, Numbers: 36, Deuteronomy: 34,
   Joshua: 24, Judges: 21, Ruth: 4, '1 Samuel': 31, '2 Samuel': 24,
