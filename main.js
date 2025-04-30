@@ -58,7 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const label = document.createElement("label");
       label.setAttribute("for", checkbox.id);
       label.className = "text-sm";
-      label.innerHTML = `<a href="https://www.esv.org/${book.replaceAll(' ', '+')}+${i}/" target="_blank" class="underline">Chapter ${i}</a>`;
+      label.innerHTML = `Chapter ${i} ${createChapterLinks(book, i)}`;
 
       chapterRow.appendChild(checkbox);
       chapterRow.appendChild(label);
@@ -96,4 +96,16 @@ function toggleNav() {
 function goTo(section) {
   alert(`Go to: ${section} (swap content here)`);
   toggleNav();
+}
+
+function createChapterLinks(book, chapter) {
+  const esvLink = `https://www.esv.org/${book.replace(/\s+/g, '+')}+${chapter}/`;
+  const koreanLink = koreanAudioLinks?.[book]?.[chapter];
+
+  return `
+    <span class="ml-2 text-sm">
+      <a href="${esvLink}" target="_blank" class="text-blue-600 underline">📖</a>
+      ${koreanLink ? `<a href="${koreanLink}" target="_blank" class="text-red-600 underline ml-1">🎧</a>` : ''}
+    </span>
+  `;
 }
