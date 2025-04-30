@@ -85,49 +85,77 @@ function renderBibleTracker() {
       header.innerHTML = `<span>${book}</span><span id="progress-${book}">0%</span>`;
 
       const chapterGrid = document.createElement("div");
-      chapterGrid.className = "mt-3 hidden flex flex-wrap gap-2";
+      chapterGrid.className = "mt-3 hidden grid grid-cols-5 gap-2";
 
-      header.addEventListener("click", () => {
-        document.querySelectorAll(".chapter-grid").forEach(g => g.classList.add("hidden"));
+      header.addEventListener("click", (e) => {
+        document.querySelectorAll(".chapter-grid").forEach(grid => {
+          if (grid !== chapterGrid) grid.classList.add("hidden");
+        });
         chapterGrid.classList.toggle("hidden");
       });
 
       for (let i = 1; i <= chapters; i++) {
-        const chapterBox = document.createElement("div");
-        chapterBox.textContent = i;
-        chapterBox.className = "w-10 h-10 text-sm flex items-center justify-center border rounded cursor-pointer hover:bg-[#fcd9a3]";
-        chapterBox.dataset.book = book;
-        chapterBox.dataset.chapter = i;
+        const box = document.createElement("div");
+        box.className = "flex items-center justify-between border rounded px-2 py-1 text-sm";
+        box.classList.add("transition", "duration-150");
 
         const key = `read:${book}:${i}`;
-        if (localStorage.getItem(key) === "true") {
-          chapterBox.classList.add("bg-[#BD6221]", "text-white");
+        const isRead = localStorage.getItem(key) === "true";
+
+        if (isRead) {
+          box.classList.add("bg-[#BD6221]", "text-[#FDEFCC]");
+        } else {
+          box.classList.add("bg-white", "text-[#777060]");
         }
 
-        chapterBox.addEventListener("click", () => {
-          const isRead = chapterBox.classList.toggle("bg-[#BD6221]");
-          chapterBox.classList.toggle("text-white", isRead);
-          localStorage.setItem(key, isRead);
+        const check = document.createElement("span");
+        check.innerHTML = isRead ? "✔️" : "◻️";
+        check.className = "cursor-pointer mr-2";
+        check.onclick = () => {
+          const nowRead = !box.classList.contains("bg-[#BD6221]");
+          box.classList.toggle("bg-[#BD6221]", nowRead);
+          box.classList.toggle("text-[#FDEFCC]", nowRead);
+          check.innerHTML = nowRead ? "✔️" : "◻️";
+          localStorage.setItem(key, nowRead ? "true" : "false");
           updateProgress(book, chapters);
-        });
-
-        const links = createChapterLinks(book, i);
-        chapterBox.title = links.tooltip;
-        chapterBox.onclick = () => {
-          window.open(links.audio || links.esv, "_blank");
         };
 
-        chapterGrid.appendChild(chapterBox);
+        const label = document.createElement("span");
+        label.textContent = i;
+
+        const linkWrap = document.createElement("span");
+        linkWrap.className = "ml-auto space-x-1";
+
+        const esvLink = document.createElement("a");
+        esvLink.href = `https://www.esv.org/${book.replace(/\s+/g, '+')}+${i}/`;
+        esvLink.target = "_blank";
+        esvLink.textContent = "📖";
+
+        const audioLink = koreanAudioLinks?.[book]?.[i];
+        if (audioLink) {
+          const yt = document.createElement("a");
+          yt.href = audioLink;
+          yt.target = "_blank";
+          yt.textContent = "🎧";
+          linkWrap.appendChild(yt);
+        }
+
+        linkWrap.appendChild(esvLink);
+
+        box.appendChild(check);
+        box.appendChild(label);
+        box.appendChild(linkWrap);
+        chapterGrid.appendChild(box);
       }
 
       chapterGrid.classList.add("chapter-grid");
       bookCard.appendChild(header);
       bookCard.appendChild(chapterGrid);
       booksWrapper.appendChild(bookCard);
-      sectionContainer.appendChild(booksWrapper);
       updateProgress(book, chapters);
     });
 
+    sectionContainer.appendChild(booksWrapper);
     container.appendChild(sectionContainer);
   });
 }
@@ -149,11 +177,4 @@ function toggleNav() {
 function goTo(section) {
   alert(`Go to: ${section}`);
   toggleNav();
-}
-
-function createChapterLinks(book, chapter) {
-  const esv = `https://www.esv.org/${book.replace(/\s+/g, '+')}+${chapter}/`;
-  const audio = koreanAudioLinks?.[book]?.[chapter];
-  const tooltip = `ESV${audio ? " + Audio" : ""}`;
-  return { esv, audio, tooltip };
 }
