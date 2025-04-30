@@ -85,9 +85,9 @@ function renderBibleTracker() {
       header.innerHTML = `<span>${book}</span><span id="progress-${book}">0%</span>`;
 
       const chapterGrid = document.createElement("div");
-      chapterGrid.className = "mt-3 hidden grid grid-cols-5 gap-2";
+      chapterGrid.className = "mt-3 hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 chapter-grid";
 
-      header.addEventListener("click", (e) => {
+      header.addEventListener("click", () => {
         document.querySelectorAll(".chapter-grid").forEach(grid => {
           if (grid !== chapterGrid) grid.classList.add("hidden");
         });
@@ -96,8 +96,8 @@ function renderBibleTracker() {
 
       for (let i = 1; i <= chapters; i++) {
         const box = document.createElement("div");
-        box.className = "flex items-center justify-between border rounded px-2 py-1 text-sm";
-        box.classList.add("transition", "duration-150");
+        box.className = "flex items-center justify-between border rounded px-2 py-1 text-sm transition duration-150 hover:shadow cursor-pointer";
+        box.classList.add("flex-wrap", "min-h-[40px]");
 
         const key = `read:${book}:${i}`;
         const isRead = localStorage.getItem(key) === "true";
@@ -108,10 +108,13 @@ function renderBibleTracker() {
           box.classList.add("bg-white", "text-[#777060]");
         }
 
+        const leftSide = document.createElement("div");
+        leftSide.className = "flex items-center gap-1";
         const check = document.createElement("span");
         check.innerHTML = isRead ? "✔️" : "◻️";
-        check.className = "cursor-pointer mr-2";
-        check.onclick = () => {
+        check.className = "cursor-pointer";
+        check.onclick = (e) => {
+          e.stopPropagation();
           const nowRead = !box.classList.contains("bg-[#BD6221]");
           box.classList.toggle("bg-[#BD6221]", nowRead);
           box.classList.toggle("text-[#FDEFCC]", nowRead);
@@ -122,33 +125,33 @@ function renderBibleTracker() {
 
         const label = document.createElement("span");
         label.textContent = i;
+        leftSide.appendChild(check);
+        leftSide.appendChild(label);
 
         const linkWrap = document.createElement("span");
-        linkWrap.className = "ml-auto space-x-1";
+        linkWrap.className = "space-x-1 flex items-center";
 
         const esvLink = document.createElement("a");
         esvLink.href = `https://www.esv.org/${book.replace(/\s+/g, '+')}+${i}/`;
         esvLink.target = "_blank";
-        esvLink.textContent = "📖";
+        esvLink.innerHTML = "📖";
 
         const audioLink = koreanAudioLinks?.[book]?.[i];
         if (audioLink) {
           const yt = document.createElement("a");
           yt.href = audioLink;
           yt.target = "_blank";
-          yt.textContent = "🎧";
+          yt.innerHTML = "🎧";
           linkWrap.appendChild(yt);
         }
 
         linkWrap.appendChild(esvLink);
 
-        box.appendChild(check);
-        box.appendChild(label);
+        box.appendChild(leftSide);
         box.appendChild(linkWrap);
         chapterGrid.appendChild(box);
       }
 
-      chapterGrid.classList.add("chapter-grid");
       bookCard.appendChild(header);
       bookCard.appendChild(chapterGrid);
       booksWrapper.appendChild(bookCard);
@@ -164,7 +167,7 @@ function updateProgress(book, total) {
   const el = document.getElementById(`progress-${book}`);
   if (!el) return;
   const boxes = document.querySelectorAll(`[data-book='${book}']`);
-  const checked = [...boxes].filter(b => b.classList.contains("bg-[#BD6221]")).length;
+  const checked = [...document.querySelectorAll(`input[id^='${book}-ch-']`)].filter(i => i.checked).length;
   const percent = Math.round((checked / total) * 100);
   el.textContent = `${percent}%`;
 }
