@@ -4,13 +4,26 @@ let koreanAudioLinks = {};
 fetch('koreanAudioLinks.json')
   .then(response => response.json())
   .then(data => {
-    koreanAudioLinks = data;
+    koreanAudioLinks = propagateAudioLinks(data);
     renderBibleTracker();
   })
   .catch(err => {
     console.error("Failed to load koreanAudioLinks.json", err);
     renderBibleTracker();
   });
+
+function propagateAudioLinks(links) {
+  const propagated = {};
+  for (const [book, chapters] of Object.entries(links)) {
+    let lastLink = null;
+    propagated[book] = {};
+    for (let i = 1; i <= 150; i++) {
+      if (chapters[i]) lastLink = chapters[i];
+      if (lastLink) propagated[book][i] = lastLink;
+    }
+  }
+  return propagated;
+}
 
 function renderBibleTracker() {
   const bibleSections = {
@@ -64,49 +77,53 @@ function renderBibleTracker() {
     booksWrapper.className = "flex flex-wrap gap-4";
 
     Object.entries(books).forEach(([book, chapters]) => {
-      const section = document.createElement("div");
-      section.className = "border rounded-lg shadow p-4 w-64";
+      const bookCard = document.createElement("div");
+      bookCard.className = "border rounded-lg shadow p-4 w-64";
 
       const header = document.createElement("h3");
       header.className = "text-lg font-semibold cursor-pointer flex justify-between items-center text-[#777060]";
       header.innerHTML = `<span>${book}</span><span id="progress-${book}">0%</span>`;
 
-      const chapterList = document.createElement("div");
-      chapterList.className = "mt-3 space-y-1 hidden";
+      const chapterGrid = document.createElement("div");
+      chapterGrid.className = "mt-3 hidden flex flex-wrap gap-2";
 
       header.addEventListener("click", () => {
-        chapterList.classList.toggle("hidden");
+        document.querySelectorAll(".chapter-grid").forEach(g => g.classList.add("hidden"));
+        chapterGrid.classList.toggle("hidden");
       });
 
       for (let i = 1; i <= chapters; i++) {
-        const chapterRow = document.createElement("div");
-        chapterRow.className = "flex items-center space-x-2";
+        const chapterBox = document.createElement("div");
+        chapterBox.textContent = i;
+        chapterBox.className = "w-10 h-10 text-sm flex items-center justify-center border rounded cursor-pointer hover:bg-[#fcd9a3]";
+        chapterBox.dataset.book = book;
+        chapterBox.dataset.chapter = i;
 
-        const checkbox = document.createElement("input");
-        checkbox.type = "checkbox";
-        checkbox.id = `${book}-ch-${i}`;
-        checkbox.className = "accent-[#777060]";
-        checkbox.addEventListener("change", () => {
+        const key = `read:${book}:${i}`;
+        if (localStorage.getItem(key) === "true") {
+          chapterBox.classList.add("bg-[#BD6221]", "text-white");
+        }
+
+        chapterBox.addEventListener("click", () => {
+          const isRead = chapterBox.classList.toggle("bg-[#BD6221]");
+          chapterBox.classList.toggle("text-white", isRead);
+          localStorage.setItem(key, isRead);
           updateProgress(book, chapters);
-          saveReadingProgress(book, i, checkbox.checked);
         });
 
-        const label = document.createElement("label");
-        label.setAttribute("for", checkbox.id);
-        label.className = "text-sm";
-        label.innerHTML = `Chapter ${i} ${createChapterLinks(book, i)}`;
+        const links = createChapterLinks(book, i);
+        chapterBox.title = links.tooltip;
+        chapterBox.onclick = () => {
+          window.open(links.audio || links.esv, "_blank");
+        };
 
-        const saved = localStorage.getItem(`read:${book}:${i}`);
-        if (saved === "true") checkbox.checked = true;
-
-        chapterRow.appendChild(checkbox);
-        chapterRow.appendChild(label);
-        chapterList.appendChild(chapterRow);
+        chapterGrid.appendChild(chapterBox);
       }
 
-      section.appendChild(header);
-      section.appendChild(chapterList);
-      booksWrapper.appendChild(section);
+      chapterGrid.classList.add("chapter-grid");
+      bookCard.appendChild(header);
+      bookCard.appendChild(chapterGrid);
+      booksWrapper.appendChild(bookCard);
       sectionContainer.appendChild(booksWrapper);
       updateProgress(book, chapters);
     });
@@ -118,19 +135,15 @@ function renderBibleTracker() {
 function updateProgress(book, total) {
   const el = document.getElementById(`progress-${book}`);
   if (!el) return;
-  const checkboxes = document.querySelectorAll(`#bibleTracker input[id^="${book}-ch-"]`);
-  const checked = [...checkboxes].filter(c => c.checked).length;
+  const boxes = document.querySelectorAll(`[data-book='${book}']`);
+  const checked = [...boxes].filter(b => b.classList.contains("bg-[#BD6221]")).length;
   const percent = Math.round((checked / total) * 100);
   el.textContent = `${percent}%`;
 }
 
-function saveReadingProgress(book, chapter, value) {
-  localStorage.setItem(`read:${book}:${chapter}`, value ? "true" : "false");
-}
-
 function toggleNav() {
   const nav = document.getElementById("sideNav");
-  nav.classList.toggle("-translate-x-full");
+  nav.classList.toggle("hidden");
 }
 
 function goTo(section) {
@@ -139,12 +152,8 @@ function goTo(section) {
 }
 
 function createChapterLinks(book, chapter) {
-  const esvLink = `https://www.esv.org/${book.replace(/\s+/g, '+')}+${chapter}/`;
-  const koreanLink = koreanAudioLinks?.[book]?.[chapter];
-  return `
-    <span class="ml-2 text-sm">
-      <a href="${esvLink}" target="_blank" class="text-blue-600 underline">📖</a>
-      ${koreanLink ? `<a href="${koreanLink}" target="_blank" class="text-red-600 underline ml-1">🎧</a>` : ''}
-    </span>
-  `;
+  const esv = `https://www.esv.org/${book.replace(/\s+/g, '+')}+${chapter}/`;
+  const audio = koreanAudioLinks?.[book]?.[chapter];
+  const tooltip = `ESV${audio ? " + Audio" : ""}`;
+  return { esv, audio, tooltip };
 }
