@@ -87,7 +87,6 @@ function renderBibleTracker() {
         checkbox.id = `${book}-ch-${i}`;
         checkbox.className = "accent-[#777060]";
         checkbox.addEventListener("change", () => {
-          updateProgress(book, chapters);
           saveReadingProgress(book, i, checkbox.checked);
         });
 
