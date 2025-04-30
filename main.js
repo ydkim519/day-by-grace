@@ -76,3 +76,14 @@ function updateProgress(book, total) {
 function saveReadingProgress(book, chapter, value) {
   localStorage.setItem(`read:${book}:${chapter}`, value ? "true" : "false");
 }
+
+function toggleNav() {
+  const nav = document.getElementById("sideNav");
+  nav.classList.toggle("-translate-x-full");
+}
+
+// Example section toggle function
+function goTo(section) {
+  alert(`Go to: ${section} (swap content here)`);
+  toggleNav();
+}
