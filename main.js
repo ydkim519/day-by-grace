@@ -51,18 +51,18 @@ function renderBibleTracker() {
     sectionContainer.appendChild(sectionHeader);
 
     const booksWrapper = document.createElement("div");
-    booksWrapper.className = "flex flex-wrap gap-6";
+    booksWrapper.className = "flex flex-wrap gap-6 relative";
 
     Object.entries(books).forEach(([book, chapters]) => {
       const bookCard = document.createElement("div");
-      bookCard.className = "border rounded-lg shadow p-4 w-full md:w-[48%] lg:w-[32%] bg-white relative";
+      bookCard.className = "border rounded-lg shadow p-4 w-full md:w-[48%] lg:w-[32%] bg-white";
 
       const header = document.createElement("h3");
       header.className = "text-lg font-semibold cursor-pointer flex justify-between items-center text-[#777060]";
       header.innerHTML = `<span>${book}</span><span id="progress-${book}">0%</span>`;
 
       const chapterGrid = document.createElement("div");
-      chapterGrid.className = "mt-4 hidden absolute left-0 w-full bg-white border-t border-[#ccc] p-4 z-10 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 chapter-grid";
+      chapterGrid.className = "mt-4 hidden absolute left-0 right-0 w-auto bg-white border-t border-[#ccc] p-4 z-10 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 chapter-grid";
 
       header.addEventListener("click", () => {
         const isOpen = !chapterGrid.classList.contains("hidden");
