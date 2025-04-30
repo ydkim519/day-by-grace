@@ -73,38 +73,44 @@ function renderBibleTracker() {
     sectionHeader.textContent = sectionName;
     sectionContainer.appendChild(sectionHeader);
 
-    const booksRow = document.createElement("div");
-    booksRow.className = "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6";
+    const booksWrapper = document.createElement("div");
+    booksWrapper.className = "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6";
+    sectionContainer.appendChild(booksWrapper);
 
-    let expandedPanel = null;
+    container.appendChild(sectionContainer);
 
     Object.entries(books).forEach(([book, chapters]) => {
+      const wrapper = document.createElement("div");
+
       const bookCard = document.createElement("div");
       bookCard.className = "border rounded-lg shadow p-4 bg-white";
 
       const header = document.createElement("h3");
       header.className = "text-lg font-semibold cursor-pointer flex justify-between items-center text-[#777060]";
       header.innerHTML = `<span>${book}</span><span id="progress-${book}">0%</span>`;
+      bookCard.appendChild(header);
 
+      const panel = renderChapterPanel(book, chapters);
+      panel.classList.add("hidden");
+
+      let isOpen = false;
       header.addEventListener("click", () => {
-        if (expandedPanel) expandedPanel.remove();
-        const panel = renderChapterPanel(book, chapters);
-        booksRow.after(panel);
-        expandedPanel = panel;
+        isOpen = !isOpen;
+        panel.classList.toggle("hidden", !isOpen);
       });
 
-      bookCard.appendChild(header);
-      booksRow.appendChild(bookCard);
-    });
+      wrapper.appendChild(bookCard);
+      wrapper.appendChild(panel);
+      booksWrapper.appendChild(wrapper);
 
-    sectionContainer.appendChild(booksRow);
-    container.appendChild(sectionContainer);
+      updateProgress(book, chapters);
+    });
   });
 }
 
 function renderChapterPanel(book, chapters) {
   const panel = document.createElement("div");
-  panel.className = "w-full bg-white border rounded shadow p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 mt-4";
+  panel.className = "w-full bg-white border rounded shadow p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 mt-4 chapter-grid";
 
   for (let i = 1; i <= chapters; i++) {
     const key = `read:${book}:${i}`;
@@ -156,8 +162,10 @@ function renderChapterPanel(book, chapters) {
 }
 
 function updateProgress(book, total) {
-  const boxes = document.querySelectorAll(`.chapter-grid .bg-[#BD6221]`);
-  const count = boxes.length;
+  let count = 0;
+  for (let i = 1; i <= total; i++) {
+    if (localStorage.getItem(`read:${book}:${i}`) === "true") count++;
+  }
   const percent = Math.round((count / total) * 100);
   const el = document.getElementById(`progress-${book}`);
   if (el) el.textContent = `${percent}%`;
