@@ -64,6 +64,8 @@ function renderBibleTracker() {
   if (!container) return;
   container.innerHTML = "";
 
+  let openPanel = null;
+
   Object.entries(bibleSections).forEach(([sectionName, books]) => {
     const sectionContainer = document.createElement("div");
     sectionContainer.className = "mb-10";
@@ -93,10 +95,13 @@ function renderBibleTracker() {
       const panel = renderChapterPanel(book, chapters);
       panel.classList.add("hidden");
 
-      let isOpen = false;
       header.addEventListener("click", () => {
-        isOpen = !isOpen;
-        panel.classList.toggle("hidden", !isOpen);
+        if (openPanel && openPanel !== panel) {
+          openPanel.classList.add("hidden");
+        }
+        const isOpen = !panel.classList.contains("hidden");
+        panel.classList.toggle("hidden", isOpen);
+        openPanel = isOpen ? null : panel;
       });
 
       wrapper.appendChild(bookCard);
