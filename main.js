@@ -142,19 +142,17 @@ function renderBibleTracker() {
       bookCard.appendChild(header);
       bookCard.appendChild(chapterGrid);
       booksWrapper.appendChild(bookCard);
+      sectionContainer.appendChild(booksWrapper);
+      container.appendChild(sectionContainer);
       updateProgress(book, chapters);
     });
-
-    sectionContainer.appendChild(booksWrapper);
-    container.appendChild(sectionContainer);
   });
 }
 
 function updateProgress(book, total) {
-  const boxes = document.querySelectorAll(`#bibleTracker input[id^="${book}-ch-"]`);
-  const boxesAlt = document.querySelectorAll(`#bibleTracker span#progress-${book} ~ div > div.bg-[#BD6221]`);
-  const checked = boxes.length ? [...boxes].filter(c => c.checked).length : boxesAlt.length;
-  const percent = Math.round((checked / total) * 100);
+  const boxes = document.querySelectorAll(`#progress-${book} ~ div .bg-[#BD6221]`);
+  const count = boxes.length;
+  const percent = Math.round((count / total) * 100);
   const el = document.getElementById(`progress-${book}`);
   if (el) el.textContent = `${percent}%`;
 }
