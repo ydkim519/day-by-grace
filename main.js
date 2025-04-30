@@ -25,6 +25,8 @@ function propagateAudioLinks(links) {
   return propagated;
 }
 
+let openPanelWrapper = null;
+
 function renderBibleTracker() {
   const bibleSections = {
     "Torah (Law)": {
@@ -64,8 +66,6 @@ function renderBibleTracker() {
   if (!container) return;
   container.innerHTML = "";
 
-  let openPanel = null;
-
   Object.entries(bibleSections).forEach(([sectionName, books]) => {
     const sectionContainer = document.createElement("div");
     sectionContainer.className = "mb-10";
@@ -78,7 +78,6 @@ function renderBibleTracker() {
     const booksWrapper = document.createElement("div");
     booksWrapper.className = "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6";
     sectionContainer.appendChild(booksWrapper);
-
     container.appendChild(sectionContainer);
 
     Object.entries(books).forEach(([book, chapters]) => {
@@ -92,21 +91,25 @@ function renderBibleTracker() {
       header.innerHTML = `<span>${book}</span><span id="progress-${book}">0%</span>`;
       bookCard.appendChild(header);
 
+      const panelWrapper = document.createElement("div");
+      panelWrapper.className = "col-span-full"; // spans all columns
+
       const panel = renderChapterPanel(book, chapters);
       panel.classList.add("hidden");
+      panelWrapper.appendChild(panel);
 
       header.addEventListener("click", () => {
-        if (openPanel && openPanel !== panel) {
-          openPanel.classList.add("hidden");
+        if (openPanelWrapper && openPanelWrapper !== panelWrapper) {
+          openPanelWrapper.querySelector("div").classList.add("hidden");
         }
         const isOpen = !panel.classList.contains("hidden");
         panel.classList.toggle("hidden", isOpen);
-        openPanel = isOpen ? null : panel;
+        openPanelWrapper = isOpen ? null : panelWrapper;
       });
 
       wrapper.appendChild(bookCard);
-      wrapper.appendChild(panel);
       booksWrapper.appendChild(wrapper);
+      booksWrapper.appendChild(panelWrapper);
 
       updateProgress(book, chapters);
     });
@@ -181,8 +184,16 @@ function toggleNav() {
   nav.classList.toggle("hidden");
 }
 
+// Close sideNav on outside click
+document.addEventListener("click", function(e) {
+  const nav = document.getElementById("sideNav");
+  const btn = e.target.closest("button");
+  if (!nav.contains(e.target) && !btn && !nav.classList.contains("hidden")) {
+    nav.classList.add("hidden");
+  }
+});
+
 function goTo(section) {
   alert(`Go to: ${section}`);
   toggleNav();
 }
-
