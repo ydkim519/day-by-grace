@@ -34,6 +34,29 @@ function renderBibleTracker() {
       Joshua: 24, Judges: 21, Ruth: 4, "1 Samuel": 31, "2 Samuel": 24,
       "1 Kings": 22, "2 Kings": 25, "1 Chronicles": 29, "2 Chronicles": 36,
       Ezra: 10, Nehemiah: 13, Esther: 10
+    },
+    "Wisdom": {
+      Job: 42, Psalms: 150, Proverbs: 31, Ecclesiastes: 12, "Song of Solomon": 8
+    },
+    "Major Prophets": {
+      Isaiah: 66, Jeremiah: 52, Lamentations: 5, Ezekiel: 48, Daniel: 12
+    },
+    "Minor Prophets": {
+      Hosea: 14, Joel: 3, Amos: 9, Obadiah: 1, Jonah: 4, Micah: 7,
+      Nahum: 3, Habakkuk: 3, Zephaniah: 3, Haggai: 2, Zechariah: 14, Malachi: 4
+    },
+    "Gospels & Acts": {
+      Matthew: 28, Mark: 16, Luke: 24, John: 21, Acts: 28
+    },
+    "Letters": {
+      Romans: 16, "1 Corinthians": 16, "2 Corinthians": 13, Galatians: 6,
+      Ephesians: 6, Philippians: 4, Colossians: 4, "1 Thessalonians": 5,
+      "2 Thessalonians": 3, "1 Timothy": 6, "2 Timothy": 4, Titus: 3,
+      Philemon: 1, Hebrews: 13, James: 5, "1 Peter": 5, "2 Peter": 3,
+      "1 John": 5, "2 John": 1, "3 John": 1, Jude: 1
+    },
+    "Revelation": {
+      Revelation: 22
     }
   };
 
@@ -51,11 +74,11 @@ function renderBibleTracker() {
     sectionContainer.appendChild(sectionHeader);
 
     const booksWrapper = document.createElement("div");
-    booksWrapper.className = "flex flex-col gap-6";
+    booksWrapper.className = "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6";
 
     Object.entries(books).forEach(([book, chapters]) => {
       const bookCard = document.createElement("div");
-      bookCard.className = "border rounded-lg shadow p-4 w-full bg-white";
+      bookCard.className = "border rounded-lg shadow p-4 bg-white";
 
       const header = document.createElement("h3");
       header.className = "text-lg font-semibold cursor-pointer flex justify-between items-center text-[#777060]";
@@ -75,24 +98,15 @@ function renderBibleTracker() {
         const isRead = localStorage.getItem(key) === "true";
 
         const box = document.createElement("div");
-        box.className = `flex items-center justify-between px-2 py-1 rounded border text-sm transition duration-150 ${isRead ? "bg-[#BD6221] text-[#FDEFCC]" : "bg-white text-[#777060]"} hover:shadow-md cursor-pointer`;
+        box.className = `flex items-center justify-between px-2 py-1 rounded border text-sm transition duration-150 hover:shadow-md cursor-pointer ${
+          isRead ? "bg-[#BD6221] text-[#FDEFCC]" : "bg-white text-[#777060]"
+        }`;
 
-        const left = document.createElement("div");
-        left.className = "flex items-center gap-1";
-
-        const checkIcon = document.createElement("img");
-        checkIcon.src = isRead ? "Ivory-check.png" : "Gray-check.png";
-        checkIcon.alt = "check";
-        checkIcon.style.width = "18px";
-        checkIcon.style.height = "18px";
-        checkIcon.className = "object-contain";
-
-        checkIcon.onclick = (e) => {
-          e.stopPropagation();
+        box.onclick = (e) => {
+          if (e.target.tagName === "A") return;
           const nowRead = !box.classList.contains("bg-[#BD6221]");
           box.classList.toggle("bg-[#BD6221]", nowRead);
           box.classList.toggle("text-[#FDEFCC]", nowRead);
-          checkIcon.src = nowRead ? "Ivory-check.png" : "Gray-check.png";
           localStorage.setItem(key, nowRead ? "true" : "false");
           updateProgress(book, chapters);
         };
@@ -100,9 +114,6 @@ function renderBibleTracker() {
         const label = document.createElement("span");
         label.textContent = i;
         label.className = "text-base font-medium";
-
-        left.appendChild(checkIcon);
-        left.appendChild(label);
 
         const right = document.createElement("div");
         right.className = "flex gap-1 items-center ml-1";
@@ -123,7 +134,7 @@ function renderBibleTracker() {
           right.appendChild(link);
         }
 
-        box.appendChild(left);
+        box.appendChild(label);
         box.appendChild(right);
         chapterGrid.appendChild(box);
       }
@@ -140,12 +151,12 @@ function renderBibleTracker() {
 }
 
 function updateProgress(book, total) {
+  const boxes = document.querySelectorAll(`#bibleTracker input[id^="${book}-ch-"]`);
+  const boxesAlt = document.querySelectorAll(`#bibleTracker span#progress-${book} ~ div > div.bg-[#BD6221]`);
+  const checked = boxes.length ? [...boxes].filter(c => c.checked).length : boxesAlt.length;
+  const percent = Math.round((checked / total) * 100);
   const el = document.getElementById(`progress-${book}`);
-  if (!el) return;
-  const boxes = document.querySelectorAll(`.chapter-grid .bg-[#BD6221]`);
-  const count = [...boxes].length;
-  const percent = Math.round((count / total) * 100);
-  el.textContent = `${percent}%`;
+  if (el) el.textContent = `${percent}%`;
 }
 
 function toggleNav() {
