@@ -51,18 +51,18 @@ function renderBibleTracker() {
     sectionContainer.appendChild(sectionHeader);
 
     const booksWrapper = document.createElement("div");
-    booksWrapper.className = "flex flex-wrap gap-6 relative";
+    booksWrapper.className = "flex flex-col gap-6";
 
     Object.entries(books).forEach(([book, chapters]) => {
       const bookCard = document.createElement("div");
-      bookCard.className = "border rounded-lg shadow p-4 w-full md:w-[48%] lg:w-[32%] bg-white";
+      bookCard.className = "border rounded-lg shadow p-4 w-full bg-white";
 
       const header = document.createElement("h3");
       header.className = "text-lg font-semibold cursor-pointer flex justify-between items-center text-[#777060]";
       header.innerHTML = `<span>${book}</span><span id="progress-${book}">0%</span>`;
 
       const chapterGrid = document.createElement("div");
-      chapterGrid.className = "mt-4 hidden absolute left-0 right-0 w-auto bg-white border-t border-[#ccc] p-4 z-10 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 chapter-grid";
+      chapterGrid.className = "mt-4 hidden bg-white border-t border-[#ccc] p-4 z-10 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 chapter-grid";
 
       header.addEventListener("click", () => {
         const isOpen = !chapterGrid.classList.contains("hidden");
@@ -75,16 +75,16 @@ function renderBibleTracker() {
         const isRead = localStorage.getItem(key) === "true";
 
         const box = document.createElement("div");
-        box.className = `flex items-center justify-between px-3 py-2 rounded border text-sm transition duration-150 ${isRead ? "bg-[#BD6221] text-[#FDEFCC]" : "bg-white text-[#777060]"} hover:shadow-md cursor-pointer`;
+        box.className = `flex items-center justify-between px-2 py-1 rounded border text-sm transition duration-150 ${isRead ? "bg-[#BD6221] text-[#FDEFCC]" : "bg-white text-[#777060]"} hover:shadow-md cursor-pointer`;
 
         const left = document.createElement("div");
-        left.className = "flex items-center gap-2";
+        left.className = "flex items-center gap-1";
 
         const checkIcon = document.createElement("img");
         checkIcon.src = isRead ? "Ivory-check.png" : "Gray-check.png";
         checkIcon.alt = "check";
-        checkIcon.style.width = "20px";
-        checkIcon.style.height = "20px";
+        checkIcon.style.width = "18px";
+        checkIcon.style.height = "18px";
         checkIcon.className = "object-contain";
 
         checkIcon.onclick = (e) => {
@@ -105,7 +105,7 @@ function renderBibleTracker() {
         left.appendChild(label);
 
         const right = document.createElement("div");
-        right.className = "flex gap-2 items-center ml-2";
+        right.className = "flex gap-1 items-center ml-1";
 
         const esv = document.createElement("a");
         esv.href = `https://www.esv.org/${book.replace(/\s+/g, '+')}+${i}/`;
