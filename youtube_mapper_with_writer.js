@@ -1,5 +1,5 @@
 
-const apiKey = "YOUR_YOUTUBE_API_KEY";
+const apiKey = "AIzaSyA9qlOqA8VgQwmAf4UY380ef7C1HqbqaOI";
 const playlistId = "PLghoOxePMNT59HLrPyB-w6GcOzzCGBWVX";
 const baseUrl = "https://www.googleapis.com/youtube/v3/playlistItems";
 let nextPageToken = "";
