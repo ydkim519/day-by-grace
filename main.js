@@ -92,7 +92,7 @@ function renderBibleTracker() {
       bookCard.appendChild(header);
 
       const panelWrapper = document.createElement("div");
-      panelWrapper.className = "col-span-full"; // spans all columns
+      panelWrapper.className = "col-span-full";
 
       const panel = renderChapterPanel(book, chapters);
       panel.classList.add("hidden");
@@ -125,16 +125,14 @@ function renderChapterPanel(book, chapters) {
     const isRead = localStorage.getItem(key) === "true";
 
     const box = document.createElement("div");
-    box.className = `flex items-center justify-between px-2 py-1 rounded border text-sm transition duration-150 hover:shadow-md cursor-pointer ${
-      isRead ? "bg-[#BD6221] text-[#FDEFCC]" : "bg-white text-[#777060]"
-    }`;
+    box.className = "flex items-center justify-between px-2 py-1 rounded border text-sm transition duration-150 hover:shadow-md cursor-pointer";
+    updateBoxStyle(box, isRead);
 
     box.onclick = (e) => {
       if (e.target.tagName === "A") return;
       const nowRead = !box.classList.contains("bg-[#BD6221]");
-      box.classList.toggle("bg-[#BD6221]", nowRead);
-      box.classList.toggle("text-[#FDEFCC]", nowRead);
       localStorage.setItem(key, nowRead ? "true" : "false");
+      updateBoxStyle(box, nowRead);
       updateProgress(book, chapters);
     };
 
@@ -169,6 +167,16 @@ function renderChapterPanel(book, chapters) {
   return panel;
 }
 
+function updateBoxStyle(box, isRead) {
+  if (isRead) {
+    box.classList.add("bg-[#BD6221]", "text-[#FDEFCC]");
+    box.classList.remove("bg-white", "text-[#777060]");
+  } else {
+    box.classList.remove("bg-[#BD6221]", "text-[#FDEFCC]");
+    box.classList.add("bg-white", "text-[#777060]");
+  }
+}
+
 function updateProgress(book, total) {
   let count = 0;
   for (let i = 1; i <= total; i++) {
@@ -184,7 +192,6 @@ function toggleNav() {
   nav.classList.toggle("hidden");
 }
 
-// Close sideNav on outside click
 document.addEventListener("click", function(e) {
   const nav = document.getElementById("sideNav");
   const btn = e.target.closest("button");
