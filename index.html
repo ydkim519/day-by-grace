@@ -5,25 +5,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Bible Reading Tracker</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    #sideNav {
+      top: 64px; /* or match your header height */
+    }
+  </style>
 </head>
-<body class="bg-white text-stone-700 font-[system-ui,sf-pro-text,-apple-system,BlinkMacSystemFont,sans-serif] min-h-screen flex flex-col">
+<body class="bg-white text-stone-700 font-[system-ui,sf-pro-text,-apple-system,BlinkMacSystemFont,sans-serif] min-h-screen flex flex-col relative">
 
   <!-- Header -->
-  <header class="bg-[#BD6221] flex items-center justify-between px-4 py-3 shadow text-[#FDEFCC] relative z-10">
-    <!-- Left: Menu and Title -->
+  <header class="bg-[#BD6221] flex items-center justify-between px-4 py-4 shadow text-[#FDEFCC] relative z-10">
     <div class="flex items-center space-x-4">
       <button onclick="toggleNav()" class="text-[#FDEFCC] text-2xl focus:outline-none">
         &#9776;
       </button>
       <h1 class="text-xl font-bold tracking-wide">Bible Reading Tracker</h1>
     </div>
-    <!-- Right: Logo -->
     <img src="day-by-grace-logo-horizontal3.png" alt="Day by Grace Logo Header" class="h-10 max-h-12 ml-auto" />
   </header>
 
-  <!-- Side Panel (below header) -->
-  <div id="sideNav" class="bg-[#BD6221] text-[#FDEFCC] w-full px-6 py-4 hidden z-0">
-    <ul class="space-y-2 text-lg font-semibold">
+  <!-- Side Panel (overlay, below header) -->
+  <div id="sideNav" class="fixed left-0 top-[64px] w-64 bg-[#BD6221] text-[#FDEFCC] hidden z-50 shadow-md h-screen">
+    <div class="p-4 font-bold text-lg">Navigation</div>
+    <ul class="space-y-3 px-4">
       <li><a href="#" onclick="goTo('bible')" class="hover:underline">📖 Bible Tracker</a></li>
       <li><a href="#" onclick="goTo('prayer')" class="hover:underline">🙏 Prayer List</a></li>
       <li><a href="#" onclick="goTo('gratitude')" class="hover:underline">📝 Gratitude</a></li>
@@ -32,8 +36,8 @@
     </ul>
   </div>
 
-  <!-- Main Content -->
-  <main class="p-4 max-w-7xl mx-auto">
+  <!-- Main -->
+  <main class="p-4 max-w-7xl mx-auto relative z-0">
     <div id="bibleTracker" class="space-y-6"></div>
   </main>
 
@@ -42,7 +46,6 @@
     © 2024 Day by Grace
   </footer>
 
-  <!-- Script -->
   <script src="main.js" defer></script>
 </body>
 </html>
