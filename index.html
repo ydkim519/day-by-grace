@@ -3,23 +3,24 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Day by Grace – Bible Tracker</title>
+  <title>Bible Reading Tracker</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="bibleTracker.js" defer></script>
 </head>
-<body class="bg-white text-stone-700 font-[system-ui,sf-pro-text,-apple-system,BlinkMacSystemFont,sans-serif] min-h-screen">
+<body class="bg-white text-stone-700 font-[system-ui,sf-pro-text,-apple-system,BlinkMacSystemFont,sans-serif] min-h-screen flex flex-col">
+
   <header class="bg-[#BD6221] flex items-center justify-between px-4 py-4 shadow text-[#FDEFCC]">
-  <img src="Day by Grace Brand Design.png" alt="Day by Grace Logo" class="h-14 md:h-16" />
-  <h1 class="text-xl font-bold tracking-wide">Bible Reading Tracker</h1>
-</header>
+    <img src="day-by-grace-logo.png" alt="Day by Grace Logo" class="h-14 md:h-16" />
+    <h1 class="text-xl font-bold tracking-wide">Bible Reading Tracker</h1>
+  </header>
 
-
-  <main class="p-4 max-w-3xl mx-auto">
+  <main class="p-4 max-w-3xl mx-auto flex-grow">
     <div id="bibleTracker" class="space-y-6"></div>
   </main>
-<script src="main.js" defer></script>
-<footer class="text-center text-sm text-[#777060] mt-10 py-4">
-  © 2024 Day by Grace
-</footer>
+
+  <footer class="text-center text-sm text-[#777060] mt-10 py-4">
+    © 2024 Day by Grace
+  </footer>
+
+  <script src="main.js" defer></script>
 </body>
 </html>
