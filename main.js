@@ -34,29 +34,6 @@ function renderBibleTracker() {
       Joshua: 24, Judges: 21, Ruth: 4, "1 Samuel": 31, "2 Samuel": 24,
       "1 Kings": 22, "2 Kings": 25, "1 Chronicles": 29, "2 Chronicles": 36,
       Ezra: 10, Nehemiah: 13, Esther: 10
-    },
-    "Wisdom": {
-      Job: 42, Psalms: 150, Proverbs: 31, Ecclesiastes: 12, "Song of Solomon": 8
-    },
-    "Major Prophets": {
-      Isaiah: 66, Jeremiah: 52, Lamentations: 5, Ezekiel: 48, Daniel: 12
-    },
-    "Minor Prophets": {
-      Hosea: 14, Joel: 3, Amos: 9, Obadiah: 1, Jonah: 4, Micah: 7,
-      Nahum: 3, Habakkuk: 3, Zephaniah: 3, Haggai: 2, Zechariah: 14, Malachi: 4
-    },
-    "Gospels & Acts": {
-      Matthew: 28, Mark: 16, Luke: 24, John: 21, Acts: 28
-    },
-    "Letters": {
-      Romans: 16, "1 Corinthians": 16, "2 Corinthians": 13, Galatians: 6,
-      Ephesians: 6, Philippians: 4, Colossians: 4, "1 Thessalonians": 5,
-      "2 Thessalonians": 3, "1 Timothy": 6, "2 Timothy": 4, Titus: 3,
-      Philemon: 1, Hebrews: 13, James: 5, "1 Peter": 5, "2 Peter": 3,
-      "1 John": 5, "2 John": 1, "3 John": 1, Jude: 1
-    },
-    "Revelation": {
-      Revelation: 22
     }
   };
 
@@ -78,19 +55,19 @@ function renderBibleTracker() {
 
     Object.entries(books).forEach(([book, chapters]) => {
       const bookCard = document.createElement("div");
-      bookCard.className = "border rounded-lg shadow p-4 w-full md:w-[48%] lg:w-[32%] bg-white";
+      bookCard.className = "border rounded-lg shadow p-4 w-full md:w-[48%] lg:w-[32%] bg-white relative";
 
       const header = document.createElement("h3");
       header.className = "text-lg font-semibold cursor-pointer flex justify-between items-center text-[#777060]";
       header.innerHTML = `<span>${book}</span><span id="progress-${book}">0%</span>`;
 
       const chapterGrid = document.createElement("div");
-      chapterGrid.className = "mt-4 hidden grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 chapter-grid";
+      chapterGrid.className = "mt-4 hidden absolute left-0 w-full bg-white border-t border-[#ccc] p-4 z-10 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 chapter-grid";
 
       header.addEventListener("click", () => {
-        const alreadyOpen = !chapterGrid.classList.contains("hidden");
+        const isOpen = !chapterGrid.classList.contains("hidden");
         document.querySelectorAll(".chapter-grid").forEach(grid => grid.classList.add("hidden"));
-        if (!alreadyOpen) chapterGrid.classList.remove("hidden");
+        if (!isOpen) chapterGrid.classList.remove("hidden");
       });
 
       for (let i = 1; i <= chapters; i++) {
@@ -103,17 +80,19 @@ function renderBibleTracker() {
         const left = document.createElement("div");
         left.className = "flex items-center gap-2";
 
-        const check = document.createElement("span");
-        check.innerHTML = "✔️";
-        check.style.color = isRead ? "#FDEFCC" : "#16a34a"; // green for unread
-        check.className = "text-base";
+        const checkIcon = document.createElement("img");
+        checkIcon.src = isRead ? "Ivory-check.png" : "Gray-check.png";
+        checkIcon.alt = "check";
+        checkIcon.style.width = "20px";
+        checkIcon.style.height = "20px";
+        checkIcon.className = "object-contain";
 
-        check.onclick = (e) => {
+        checkIcon.onclick = (e) => {
           e.stopPropagation();
           const nowRead = !box.classList.contains("bg-[#BD6221]");
           box.classList.toggle("bg-[#BD6221]", nowRead);
           box.classList.toggle("text-[#FDEFCC]", nowRead);
-          check.style.color = nowRead ? "#FDEFCC" : "#16a34a";
+          checkIcon.src = nowRead ? "Ivory-check.png" : "Gray-check.png";
           localStorage.setItem(key, nowRead ? "true" : "false");
           updateProgress(book, chapters);
         };
@@ -122,7 +101,7 @@ function renderBibleTracker() {
         label.textContent = i;
         label.className = "text-base font-medium";
 
-        left.appendChild(check);
+        left.appendChild(checkIcon);
         left.appendChild(label);
 
         const right = document.createElement("div");
