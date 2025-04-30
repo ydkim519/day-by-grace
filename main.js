@@ -6,7 +6,11 @@ fetch('koreanAudioLinks.json')
     koreanAudioLinks = data;
     renderBibleTracker();  // <-- call your render/init function here
   })
-  .catch(err => console.error("Failed to load koreanAudioLinks.json", err));
+  .catch(err => {
+  console.error("Failed to load koreanAudioLinks.json", err);
+  renderBibleTracker(); // fallback
+});
+
 
 const bibleSections = {
   "Torah (Law)": {
@@ -43,8 +47,9 @@ const bibleSections = {
 };
 
 
-document.addEventListener("DOMContentLoaded", () => {
+function renderBibleTracker() {
   const container = document.getElementById("bibleTracker");
+  container.innerHTML = ""; // clear if rerendering
 
   Object.entries(bibleSections).forEach(([sectionName, books]) => {
     const sectionContainer = document.createElement("div");
@@ -109,8 +114,7 @@ document.addEventListener("DOMContentLoaded", () => {
     sectionContainer.appendChild(booksWrapper);
     container.appendChild(sectionContainer);
   });
-});
-
+}
 
 
 function updateProgress(book, total) {
