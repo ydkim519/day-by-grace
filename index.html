@@ -16,8 +16,26 @@
   </header>
 
   <main class="p-4 max-w-3xl mx-auto flex-grow">
-    <div id="bibleTracker" class="space-y-6"></div>
+    <div id="bibleTracker" class="space-y-6">
+    </div>
   </main>
+
+    <!-- Toggle Button -->
+  <button onclick="toggleNav()" class="fixed top-4 left-4 z-50 bg-[#777060] text-white px-3 py-2 rounded-md shadow-md">
+    ☰ Menu
+  </button>
+  
+  <!-- Side Panel -->
+  <div id="sideNav" class="fixed left-0 top-0 h-full w-60 bg-[#BD6221] text-[#FDEFCC] transform -translate-x-full transition-transform z-40">
+    <div class="p-4 font-bold text-lg">Navigation</div>
+    <ul class="space-y-3 px-4">
+      <li><a href="#" onclick="goTo('bible')" class="hover:underline">📖 Bible Tracker</a></li>
+      <li><a href="#" onclick="goTo('prayer')" class="hover:underline">🙏 Prayer List</a></li>
+      <li><a href="#" onclick="goTo('gratitude')" class="hover:underline">📝 Gratitude</a></li>
+      <li><a href="#" onclick="goTo('notes')" class="hover:underline">📓 Sermon Notes</a></li>
+      <li><a href="#" onclick="goTo('events')" class="hover:underline">📅 Events</a></li>
+    </ul>
+  </div>
 
   <footer class="text-center text-sm text-[#777060] mt-10 py-4">
     © 2024 Day by Grace
