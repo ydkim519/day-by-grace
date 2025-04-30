@@ -7,26 +7,13 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="main.js" defer></script>
 </head>
-<body class="bg-amber-50 text-stone-700 font-sans min-h-screen">
-  <header class="bg-yellow-100 p-6 text-center text-2xl font-bold shadow-sm rounded-b-lg tracking-wide">
-    Day by Grace – Bible Tracker
+<body class="bg-white text-stone-700 font-[system-ui,sf-pro-text,-apple-system,BlinkMacSystemFont,sans-serif] min-h-screen">
+  <header class="bg-[#BD6221] p-6 text-center text-2xl font-bold shadow-sm rounded-b-lg tracking-wide text-[#FDEFCC]">
+    Day by Grace – Bible Reading Tracker
   </header>
-
-  <main class="p-6 space-y-6 max-w-xl mx-auto">
-    <h2 class="text-xl font-semibold">📖 Select a Reading Plan</h2>
-
-    <select id="planSelect" class="w-full p-3 border border-stone-300 rounded-lg shadow-sm">
-      <option value="Genesis 1">Genesis 1</option>
-      <option value="John 1">John 1</option>
-      <option value="Psalm 23">Psalm 23</option>
-    </select>
-
-    <button onclick="markAsRead()" class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-lg shadow-md transition">
-      Mark as Read
-    </button>
-
-    <h3 class="text-lg mt-8 font-medium border-b border-stone-300 pb-1">✅ Completed Readings</h3>
-    <ul id="completedList" class="list-disc pl-6 space-y-1 text-base"></ul>
+  <main class="p-4 max-w-3xl mx-auto">
+    <div id="bibleTracker" class="space-y-6"></div>
   </main>
+  <script src="main.js" defer></script>
 </body>
 </html>
