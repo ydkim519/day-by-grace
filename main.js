@@ -1,4 +1,3 @@
-
 let koreanAudioLinks = {};
 
 fetch('koreanAudioLinks.json')
@@ -26,37 +25,14 @@ function propagateAudioLinks(links) {
 }
 
 const bibleSections = {
-  "Torah (Law)": {
-    Genesis: 50, Exodus: 40, Leviticus: 27, Numbers: 36, Deuteronomy: 34
-  },
-  "History": {
-    Joshua: 24, Judges: 21, Ruth: 4, "1 Samuel": 31, "2 Samuel": 24,
-    "1 Kings": 22, "2 Kings": 25, "1 Chronicles": 29, "2 Chronicles": 36,
-    Ezra: 10, Nehemiah: 13, Esther: 10
-  },
-  "Wisdom": {
-    Job: 42, Psalms: 150, Proverbs: 31, Ecclesiastes: 12, "Song of Solomon": 8
-  },
-  "Major Prophets": {
-    Isaiah: 66, Jeremiah: 52, Lamentations: 5, Ezekiel: 48, Daniel: 12
-  },
-  "Minor Prophets": {
-    Hosea: 14, Joel: 3, Amos: 9, Obadiah: 1, Jonah: 4, Micah: 7,
-    Nahum: 3, Habakkuk: 3, Zephaniah: 3, Haggai: 2, Zechariah: 14, Malachi: 4
-  },
-  "Gospels & Acts": {
-    Matthew: 28, Mark: 16, Luke: 24, John: 21, Acts: 28
-  },
-  "Letters": {
-    Romans: 16, "1 Corinthians": 16, "2 Corinthians": 13, Galatians: 6,
-    Ephesians: 6, Philippians: 4, Colossians: 4, "1 Thessalonians": 5,
-    "2 Thessalonians": 3, "1 Timothy": 6, "2 Timothy": 4, Titus: 3,
-    Philemon: 1, Hebrews: 13, James: 5, "1 Peter": 5, "2 Peter": 3,
-    "1 John": 5, "2 John": 1, "3 John": 1, Jude: 1
-  },
-  "Revelation": {
-    Revelation: 22
-  }
+  "Torah (Law)": { Genesis: 50, Exodus: 40, Leviticus: 27, Numbers: 36, Deuteronomy: 34 },
+  "History": { Joshua: 24, Judges: 21, Ruth: 4, "1 Samuel": 31, "2 Samuel": 24, "1 Kings": 22, "2 Kings": 25, "1 Chronicles": 29, "2 Chronicles": 36, Ezra: 10, Nehemiah: 13, Esther: 10 },
+  "Wisdom": { Job: 42, Psalms: 150, Proverbs: 31, Ecclesiastes: 12, "Song of Solomon": 8 },
+  "Major Prophets": { Isaiah: 66, Jeremiah: 52, Lamentations: 5, Ezekiel: 48, Daniel: 12 },
+  "Minor Prophets": { Hosea: 14, Joel: 3, Amos: 9, Obadiah: 1, Jonah: 4, Micah: 7, Nahum: 3, Habakkuk: 3, Zephaniah: 3, Haggai: 2, Zechariah: 14, Malachi: 4 },
+  "Gospels & Acts": { Matthew: 28, Mark: 16, Luke: 24, John: 21, Acts: 28 },
+  "Letters": { Romans: 16, "1 Corinthians": 16, "2 Corinthians": 13, Galatians: 6, Ephesians: 6, Philippians: 4, Colossians: 4, "1 Thessalonians": 5, "2 Thessalonians": 3, "1 Timothy": 6, "2 Timothy": 4, Titus: 3, Philemon: 1, Hebrews: 13, James: 5, "1 Peter": 5, "2 Peter": 3, "1 John": 5, "2 John": 1, "3 John": 1, Jude: 1 },
+  "Revelation": { Revelation: 22 }
 };
 
 function renderBibleGroups() {
@@ -65,14 +41,14 @@ function renderBibleGroups() {
 
   Object.entries(bibleSections).forEach(([sectionName, books]) => {
     const section = document.createElement("div");
-    section.className = "mb-6";
+    section.className = "mb-4";
 
     const toggleBtn = document.createElement("h2");
-    toggleBtn.className = "text-xl font-bold mb-2 cursor-pointer text-[#BD6221]";
+    toggleBtn.className = "text-lg font-bold mb-1 cursor-pointer text-[#BD6221]";
     toggleBtn.textContent = sectionName;
 
     const bookList = document.createElement("div");
-    bookList.className = "flex flex-col gap-2 ml-4 hidden";
+    bookList.className = "flex flex-col gap-1 ml-2 hidden";
 
     toggleBtn.addEventListener("click", () => {
       bookList.classList.toggle("hidden");
@@ -80,8 +56,8 @@ function renderBibleGroups() {
 
     Object.entries(books).forEach(([book, chapters]) => {
       const card = document.createElement("div");
-      card.className = "border p-3 rounded cursor-pointer hover:shadow flex justify-between items-center";
-      card.innerHTML = `<span class="font-semibold text-[#777060]">${book}</span><span id="progress-${book}" class="text-sm">0%</span>`;
+      card.className = "border px-2 py-1 rounded cursor-pointer hover:shadow-sm flex justify-between items-center text-sm";
+      card.innerHTML = `<span class="font-medium text-[#777060]">${book}</span><span id="progress-${book}" class="text-xs">0%</span>`;
 
       card.addEventListener("click", () => {
         openRightPanel(book, chapters);
@@ -105,23 +81,36 @@ function createRightPanelContainer() {
 
   const panel = document.createElement("div");
   panel.id = "chapterPanel";
-  panel.className = "fixed top-20 right-0 w-full max-w-md h-full bg-white border-l shadow-lg p-4 overflow-y-auto transform translate-x-full transition-transform duration-300 z-50";
+  panel.className = "fixed top-16 right-0 w-full max-w-md h-full bg-white border-l shadow-lg p-4 overflow-y-auto transform translate-x-full transition-transform duration-300 z-50";
   document.body.appendChild(panel);
 }
 
 function openRightPanel(book, chapters) {
   const panel = document.getElementById("chapterPanel");
-  panel.innerHTML = `<h2 class="text-xl font-bold mb-4 text-[#BD6221]">${book}</h2>`;
+  panel.innerHTML = "";
+
+  const backBtn = document.createElement("button");
+  backBtn.textContent = "← Back";
+  backBtn.className = "mb-3 text-sm text-[#BD6221] underline";
+  backBtn.onclick = () => {
+    panel.classList.add("translate-x-full");
+  };
+  panel.appendChild(backBtn);
+
+  const title = document.createElement("h2");
+  title.className = "text-lg font-bold mb-2 text-[#BD6221]";
+  title.textContent = book;
+  panel.appendChild(title);
 
   const grid = document.createElement("div");
-  grid.className = "grid grid-cols-2 sm:grid-cols-3 gap-2";
+  grid.className = "grid grid-cols-2 sm:grid-cols-3 gap-1";
 
   for (let i = 1; i <= chapters; i++) {
     const key = `read:${book}:${i}`;
     const isRead = localStorage.getItem(key) === "true";
 
     const box = document.createElement("div");
-    box.className = "flex justify-between items-center p-2 rounded border cursor-pointer text-sm transition";
+    box.className = "flex justify-between items-center px-2 py-1 rounded border cursor-pointer text-xs";
     updateBoxStyle(box, isRead);
 
     box.onclick = (e) => {
@@ -136,10 +125,10 @@ function openRightPanel(book, chapters) {
     label.textContent = i;
 
     const links = document.createElement("div");
-    links.className = "flex gap-1 items-center ml-2";
+    links.className = "flex gap-1 items-center ml-1";
 
     const esv = document.createElement("a");
-    esv.href = `https://www.esv.org/${book.replace(/\s+/g, '+')}+${i}/`;
+    esv.href = `https://www.esv.org/${book.replace(/\\s+/g, '+')}+${i}/`;
     esv.target = "_blank";
     esv.innerHTML = "📖";
 
