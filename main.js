@@ -69,13 +69,18 @@ function renderBibleLayout(initialBook) {
 }
 
 function renderChapterPanel(book, chapters) {
-  const panel = document.getElementById("chapterPanel");
-  panel.innerHTML = "";
+  const chapterPanel = document.getElementById("chapterPanel");
+  const calendarPanel = document.getElementById("calendarPanel");
+
+  chapterPanel.classList.remove("hidden");
+  calendarPanel.classList.add("hidden");
+
+  chapterPanel.innerHTML = "";
 
   const title = document.createElement("h2");
   title.className = "text-lg font-bold text-[#BD6221] mb-2 whitespace-nowrap overflow-hidden text-ellipsis";
   title.textContent = book;
-  panel.appendChild(title);
+  chapterPanel.appendChild(title);
 
   const grid = document.createElement("div");
   grid.className = "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-1";
@@ -123,7 +128,7 @@ function renderChapterPanel(book, chapters) {
     grid.appendChild(box);
   }
 
-  panel.appendChild(grid);
+  chapterPanel.appendChild(grid);
 }
 
 function updateBoxStyle(box, isRead) {
@@ -150,8 +155,6 @@ function toggleNav() {
   const nav = document.getElementById("sideNav");
   nav.classList.toggle("-translate-x-full");
 }
-
-// ✅ FIX: single toggleNav definition
 
 let calendarInitialized = false;
 
@@ -192,10 +195,7 @@ function goTo(section) {
       calendar.render();
       calendarInitialized = true;
     }
-  } else {
-    chapterPanel.classList.add('hidden');
-    calendarPanel.classList.add('hidden');
   }
 
-  toggleNav(); // close nav
+  toggleNav();
 }
