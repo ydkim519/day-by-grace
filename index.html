@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bible Reading Tracker</title>
+  <title>Day by Grace</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet" />
   <style>
@@ -35,11 +35,11 @@
 
   <!-- Main Content -->
   <main class="flex flex-1 overflow-hidden">
-    <!-- Book List -->
+    <!-- Bible Tracker Sidebar -->
     <div id="bibleTracker" class="w-48 sm:w-60 bg-[#FDEFCC] p-3 overflow-y-auto h-screen flex-shrink-0"></div>
-    <!-- Chapter Panel -->
+
+    <!-- Panels -->
     <div id="chapterPanel" class="flex-1 p-4 overflow-y-auto"></div>
-    <!-- Calendar Panel -->
     <div id="calendarPanel" class="flex-1 p-4 overflow-y-auto hidden"></div>
   </main>
 
@@ -47,5 +47,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.js"></script>
   <script src="main.js" defer></script>
+
 </body>
 </html>
