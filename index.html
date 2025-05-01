@@ -5,9 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Bible Reading Tracker</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- ✅ move link OUT of style -->
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet" />
+  
   <style>
     #sideNav { top: 64px; }
-  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet" />
   </style>
 </head>
 <body class="bg-white text-stone-700 font-[system-ui,sf-pro-text,-apple-system,BlinkMacSystemFont,sans-serif] min-h-screen flex flex-col">
@@ -38,9 +41,14 @@
   <main class="flex flex-1 overflow-hidden">
     <!-- Book List -->
     <div id="bibleTracker" class="w-48 sm:w-60 bg-[#FDEFCC] p-3 overflow-y-auto h-screen flex-shrink-0"></div>
-    <!-- Chapter Panel -->
-    <div id="chapterPanel" class="flex-1 p-4 overflow-y-auto"></div>
-  <div id="calendarPanel" class="flex-1 p-4 overflow-y-auto"></div>
+    
+    <!-- Panel Wrapper -->
+    <div class="flex-1 relative overflow-y-auto">
+      <!-- Chapter Panel (default shown) -->
+      <div id="chapterPanel" class="p-4"></div>
+      <!-- Calendar Panel (default hidden) -->
+      <div id="calendarPanel" class="p-4 hidden"></div>
+    </div>
   </main>
 
   <footer class="text-center text-sm text-[#777060] mt-4 py-4">© 2025 Day by Grace</footer>
