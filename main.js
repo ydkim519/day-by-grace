@@ -153,10 +153,6 @@ function toggleNav() {
   nav.classList.toggle("-translate-x-full");
 }
 
-function goTo(section) {
-  alert(`Go to: ${section}`);
-  toggleNav();
-}
 function toggleNav() {
   const nav = document.getElementById("sideNav");
   nav.classList.toggle("-translate-x-full");
