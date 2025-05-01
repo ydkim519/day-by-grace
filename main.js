@@ -57,13 +57,11 @@ function renderBibleLayout(initialBook) {
       const percentSpan = document.createElement("span");
       percentSpan.id = `progress-${book}`;
       percentSpan.className = "text-xs text-right w-10";
-      percentSpan.textContent = "0%";
+      percentSpan.textContent = computeProgress(book, chapters);
 
       bookRow.appendChild(bookBtn);
       bookRow.appendChild(percentSpan);
       container.appendChild(bookRow);
-
-      updateProgress(book, chapters);
     });
   });
 
@@ -153,10 +151,9 @@ function toggleNav() {
   nav.classList.toggle("-translate-x-full");
 }
 
-function toggleNav() {
-  const nav = document.getElementById("sideNav");
-  nav.classList.toggle("-translate-x-full");
-}
+// ✅ FIX: single toggleNav definition
+
+let calendarInitialized = false;
 
 function goTo(section) {
   const chapterPanel = document.getElementById("chapterPanel");
@@ -168,12 +165,37 @@ function goTo(section) {
   } else if (section === 'events') {
     chapterPanel.classList.add('hidden');
     calendarPanel.classList.remove('hidden');
+
+    if (!calendarInitialized) {
+      const calendar = new FullCalendar.Calendar(calendarPanel, {
+        initialView: 'dayGridMonth',
+        headerToolbar: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'dayGridMonth,timeGridWeek,timeGridDay'
+        },
+        selectable: true,
+        select: function (info) {
+          const eventName = prompt('Event name:');
+          if (eventName) {
+            calendar.addEvent({
+              title: eventName,
+              start: info.startStr,
+              end: info.endStr,
+              allDay: info.allDay,
+              backgroundColor: '#BD6221'
+            });
+          }
+          calendar.unselect();
+        }
+      });
+      calendar.render();
+      calendarInitialized = true;
+    }
   } else {
-    // Optionally hide both or show default
     chapterPanel.classList.add('hidden');
     calendarPanel.classList.add('hidden');
   }
 
-  toggleNav(); // close nav after selecting
+  toggleNav(); // close nav
 }
-
