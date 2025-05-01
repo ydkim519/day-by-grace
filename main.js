@@ -4,7 +4,7 @@ fetch('koreanAudioLinks.json')
   .then(response => response.json())
   .then(data => {
     koreanAudioLinks = propagateAudioLinks(data);
-    renderBibleLayout("Genesis"); // Default load Genesis
+    renderBibleLayout("Genesis");
   })
   .catch(err => {
     console.error("Failed to load koreanAudioLinks.json", err);
@@ -39,18 +39,15 @@ function renderBibleLayout(initialBook) {
   const container = document.getElementById("bibleTracker");
   container.innerHTML = "";
 
-  const sidebar = document.createElement("div");
-  sidebar.className = "w-60 bg-[#FDEFCC] p-3 overflow-y-auto h-screen flex-shrink-0";
-
   Object.entries(bibleSections).forEach(([sectionName, books]) => {
     const sectionTitle = document.createElement("h2");
     sectionTitle.className = "font-bold text-[#BD6221] mb-1";
     sectionTitle.textContent = sectionName;
-    sidebar.appendChild(sectionTitle);
+    container.appendChild(sectionTitle);
 
     Object.entries(books).forEach(([book, chapters]) => {
       const bookRow = document.createElement("div");
-      bookRow.className = "flex justify-between items-center text-sm";
+      bookRow.className = "flex justify-between items-center text-sm mb-1";
 
       const bookBtn = document.createElement("button");
       bookBtn.className = "text-left text-[#777060] px-2 py-1 rounded hover:bg-[#BD6221] hover:text-[#FDEFCC] flex-grow";
@@ -63,19 +60,11 @@ function renderBibleLayout(initialBook) {
 
       bookRow.appendChild(bookBtn);
       bookRow.appendChild(percentSpan);
-      sidebar.appendChild(bookRow);
+      container.appendChild(bookRow);
 
-      updateProgress(book, chapters);
+      updateProgress(book, chapters); // Ensure % is initialized!
     });
   });
-
-  const panel = document.createElement("div");
-  panel.id = "chapterPanel";
-  panel.className = "flex-1 p-4 overflow-y-auto";
-
-  container.className = "flex";
-  container.appendChild(sidebar);
-  container.appendChild(panel);
 
   renderChapterPanel(initialBook, bibleSections["Torah (Law)"][initialBook]);
 }
