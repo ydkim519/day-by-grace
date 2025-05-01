@@ -39,14 +39,11 @@ function renderBibleLayout(initialBook) {
   const container = document.getElementById("bibleTracker");
   container.innerHTML = "";
 
-  const sidebar = document.createElement("div");
-  sidebar.className = "w-60 sm:w-48 bg-[#FDEFCC] p-3 overflow-y-auto h-screen flex-shrink-0"; // ✅ this is the only adjustment
-
   Object.entries(bibleSections).forEach(([sectionName, books]) => {
     const sectionTitle = document.createElement("h2");
     sectionTitle.className = "font-bold text-[#BD6221] mb-1";
     sectionTitle.textContent = sectionName;
-    sidebar.appendChild(sectionTitle);
+    container.appendChild(sectionTitle);
 
     Object.entries(books).forEach(([book, chapters]) => {
       const bookRow = document.createElement("div");
@@ -60,23 +57,15 @@ function renderBibleLayout(initialBook) {
       const percentSpan = document.createElement("span");
       percentSpan.id = `progress-${book}`;
       percentSpan.className = "text-xs text-right w-10";
-      percentSpan.textContent = "0%"; // ✅ initialize visible %
+      percentSpan.textContent = "0%";
 
       bookRow.appendChild(bookBtn);
       bookRow.appendChild(percentSpan);
-      sidebar.appendChild(bookRow);
+      container.appendChild(bookRow);
 
-      updateProgress(book, chapters); // ✅ ensure % is calculated
+      updateProgress(book, chapters);
     });
   });
-
-  const panel = document.createElement("div");
-  panel.id = "chapterPanel";
-  panel.className = "flex-1 p-4 overflow-y-auto";
-
-  container.className = "flex";
-  container.appendChild(sidebar);
-  container.appendChild(panel);
 
   renderChapterPanel(initialBook, bibleSections["Torah (Law)"][initialBook]);
 }
@@ -86,7 +75,7 @@ function renderChapterPanel(book, chapters) {
   panel.innerHTML = "";
 
   const title = document.createElement("h2");
-  title.className = "text-lg font-bold text-[#BD6221] mb-2";
+  title.className = "text-lg font-bold text-[#BD6221] mb-2 whitespace-nowrap overflow-hidden text-ellipsis";
   title.textContent = book;
   panel.appendChild(title);
 
@@ -116,7 +105,7 @@ function renderChapterPanel(book, chapters) {
     links.className = "flex gap-1 items-center ml-1";
 
     const esv = document.createElement("a");
-    esv.href = `https://www.esv.org/${book.replace(/\\s+/g, '+')}+${i}/`;
+    esv.href = `https://www.esv.org/${book.replace(/\s+/g, '+')}+${i}/`;
     esv.target = "_blank";
     esv.innerHTML = "📖";
 
@@ -157,4 +146,14 @@ function updateProgress(book, total) {
   const percent = Math.round((count / total) * 100);
   const el = document.getElementById(`progress-${book}`);
   if (el) el.textContent = `${percent}%`;
+}
+
+function toggleNav() {
+  const nav = document.getElementById("sideNav");
+  nav.classList.toggle("-translate-x-full");
+}
+
+function goTo(section) {
+  alert(`Go to: ${section}`);
+  toggleNav();
 }
