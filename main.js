@@ -49,11 +49,21 @@ function renderBibleLayout(initialBook) {
     sidebar.appendChild(sectionTitle);
 
     Object.entries(books).forEach(([book, chapters]) => {
+      const bookRow = document.createElement("div");
+      bookRow.className = "flex justify-between items-center text-sm";
+
       const bookBtn = document.createElement("button");
-      bookBtn.className = "text-left w-full text-[#777060] px-2 py-1 rounded hover:bg-[#BD6221] hover:text-[#FDEFCC] text-sm";
+      bookBtn.className = "text-left text-[#777060] px-2 py-1 rounded hover:bg-[#BD6221] hover:text-[#FDEFCC] flex-grow";
       bookBtn.textContent = book;
       bookBtn.onclick = () => renderChapterPanel(book, chapters);
-      sidebar.appendChild(bookBtn);
+
+      const percentSpan = document.createElement("span");
+      percentSpan.id = `progress-${book}`;
+      percentSpan.className = "text-xs text-right w-10";
+
+      bookRow.appendChild(bookBtn);
+      bookRow.appendChild(percentSpan);
+      sidebar.appendChild(bookRow);
 
       updateProgress(book, chapters);
     });
@@ -80,7 +90,7 @@ function renderChapterPanel(book, chapters) {
   panel.appendChild(title);
 
   const grid = document.createElement("div");
-  grid.className = "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-1";
+  grid.className = "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-1";
 
   for (let i = 1; i <= chapters; i++) {
     const key = `read:${book}:${i}`;
