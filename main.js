@@ -39,11 +39,14 @@ function renderBibleLayout(initialBook) {
   const container = document.getElementById("bibleTracker");
   container.innerHTML = "";
 
+  const sidebar = document.createElement("div");
+  sidebar.className = "w-48 sm:w-60 bg-[#FDEFCC] p-3 overflow-y-auto h-screen flex-shrink-0";
+
   Object.entries(bibleSections).forEach(([sectionName, books]) => {
     const sectionTitle = document.createElement("h2");
     sectionTitle.className = "font-bold text-[#BD6221] mb-1";
     sectionTitle.textContent = sectionName;
-    container.appendChild(sectionTitle);
+    sidebar.appendChild(sectionTitle);
 
     Object.entries(books).forEach(([book, chapters]) => {
       const bookRow = document.createElement("div");
@@ -60,11 +63,19 @@ function renderBibleLayout(initialBook) {
 
       bookRow.appendChild(bookBtn);
       bookRow.appendChild(percentSpan);
-      container.appendChild(bookRow);
+      sidebar.appendChild(bookRow);
 
-      updateProgress(book, chapters); // Ensure % is initialized!
+      updateProgress(book, chapters);
     });
   });
+
+  const panel = document.createElement("div");
+  panel.id = "chapterPanel";
+  panel.className = "flex-1 p-4 overflow-y-auto";
+
+  container.className = "flex";
+  container.appendChild(sidebar);
+  container.appendChild(panel);
 
   renderChapterPanel(initialBook, bibleSections["Torah (Law)"][initialBook]);
 }
