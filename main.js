@@ -4,11 +4,11 @@ fetch('koreanAudioLinks.json')
   .then(response => response.json())
   .then(data => {
     koreanAudioLinks = propagateAudioLinks(data);
-    renderBibleGroups();
+    renderBibleLayout("Genesis"); // Default load Genesis
   })
   .catch(err => {
     console.error("Failed to load koreanAudioLinks.json", err);
-    renderBibleGroups();
+    renderBibleLayout("Genesis");
   });
 
 function propagateAudioLinks(links) {
@@ -35,75 +35,52 @@ const bibleSections = {
   "Revelation": { Revelation: 22 }
 };
 
-function renderBibleGroups() {
+function renderBibleLayout(initialBook) {
   const container = document.getElementById("bibleTracker");
   container.innerHTML = "";
 
+  const sidebar = document.createElement("div");
+  sidebar.className = "w-60 bg-[#FDEFCC] p-3 overflow-y-auto h-screen flex-shrink-0";
+
   Object.entries(bibleSections).forEach(([sectionName, books]) => {
-    const section = document.createElement("div");
-    section.className = "mb-4";
-
-    const toggleBtn = document.createElement("h2");
-    toggleBtn.className = "text-lg font-bold mb-1 cursor-pointer text-[#BD6221]";
-    toggleBtn.textContent = sectionName;
-
-    const bookList = document.createElement("div");
-    bookList.className = "flex flex-col gap-1 ml-2 hidden";
-
-    toggleBtn.addEventListener("click", () => {
-      bookList.classList.toggle("hidden");
-    });
+    const sectionTitle = document.createElement("h2");
+    sectionTitle.className = "font-bold text-[#BD6221] mb-1";
+    sectionTitle.textContent = sectionName;
+    sidebar.appendChild(sectionTitle);
 
     Object.entries(books).forEach(([book, chapters]) => {
-      const card = document.createElement("div");
-      card.className = "border px-2 py-1 rounded cursor-pointer hover:shadow-sm flex justify-between items-center text-sm";
-      card.innerHTML = `<span class="font-medium text-[#777060]">${book}</span><span id="progress-${book}" class="text-xs">0%</span>`;
+      const bookBtn = document.createElement("button");
+      bookBtn.className = "text-left w-full text-[#777060] px-2 py-1 rounded hover:bg-[#BD6221] hover:text-[#FDEFCC] text-sm";
+      bookBtn.textContent = book;
+      bookBtn.onclick = () => renderChapterPanel(book, chapters);
+      sidebar.appendChild(bookBtn);
 
-      card.addEventListener("click", () => {
-        openRightPanel(book, chapters);
-      });
-
-      bookList.appendChild(card);
       updateProgress(book, chapters);
     });
-
-    section.appendChild(toggleBtn);
-    section.appendChild(bookList);
-    container.appendChild(section);
   });
-
-  createRightPanelContainer();
-}
-
-function createRightPanelContainer() {
-  let existing = document.getElementById("chapterPanel");
-  if (existing) existing.remove();
 
   const panel = document.createElement("div");
   panel.id = "chapterPanel";
-  panel.className = "fixed top-16 right-0 w-full max-w-md h-full bg-white border-l shadow-lg p-4 overflow-y-auto transform translate-x-full transition-transform duration-300 z-50";
-  document.body.appendChild(panel);
+  panel.className = "flex-1 p-4 overflow-y-auto";
+
+  container.className = "flex";
+  container.appendChild(sidebar);
+  container.appendChild(panel);
+
+  renderChapterPanel(initialBook, bibleSections["Torah (Law)"][initialBook]);
 }
 
-function openRightPanel(book, chapters) {
+function renderChapterPanel(book, chapters) {
   const panel = document.getElementById("chapterPanel");
   panel.innerHTML = "";
 
-  const backBtn = document.createElement("button");
-  backBtn.textContent = "← Back";
-  backBtn.className = "mb-3 text-sm text-[#BD6221] underline";
-  backBtn.onclick = () => {
-    panel.classList.add("translate-x-full");
-  };
-  panel.appendChild(backBtn);
-
   const title = document.createElement("h2");
-  title.className = "text-lg font-bold mb-2 text-[#BD6221]";
+  title.className = "text-lg font-bold text-[#BD6221] mb-2";
   title.textContent = book;
   panel.appendChild(title);
 
   const grid = document.createElement("div");
-  grid.className = "grid grid-cols-2 sm:grid-cols-3 gap-1";
+  grid.className = "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-1";
 
   for (let i = 1; i <= chapters; i++) {
     const key = `read:${book}:${i}`;
@@ -149,7 +126,6 @@ function openRightPanel(book, chapters) {
   }
 
   panel.appendChild(grid);
-  panel.classList.remove("translate-x-full");
 }
 
 function updateBoxStyle(box, isRead) {
