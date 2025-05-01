@@ -157,3 +157,27 @@ function goTo(section) {
   alert(`Go to: ${section}`);
   toggleNav();
 }
+function toggleNav() {
+  const nav = document.getElementById("sideNav");
+  nav.classList.toggle("-translate-x-full");
+}
+
+function goTo(section) {
+  const chapterPanel = document.getElementById("chapterPanel");
+  const calendarPanel = document.getElementById("calendarPanel");
+
+  if (section === 'bible') {
+    chapterPanel.classList.remove('hidden');
+    calendarPanel.classList.add('hidden');
+  } else if (section === 'events') {
+    chapterPanel.classList.add('hidden');
+    calendarPanel.classList.remove('hidden');
+  } else {
+    // Optionally hide both or show default
+    chapterPanel.classList.add('hidden');
+    calendarPanel.classList.add('hidden');
+  }
+
+  toggleNav(); // close nav after selecting
+}
+
