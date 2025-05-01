@@ -199,4 +199,3 @@ function goTo(section) {
 
   toggleNav();
 }
-
