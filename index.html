@@ -5,10 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Bible Reading Tracker</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- ✅ move link OUT of style -->
   <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet" />
-  
   <style>
     #sideNav { top: 64px; }
   </style>
@@ -27,8 +24,7 @@
 
   <!-- SideNav Panel -->
   <div id="sideNav" class="fixed left-0 top-[64px] w-60 bg-[#BD6221] text-[#FDEFCC] transform -translate-x-full transition-transform z-50 h-screen">
-    <div class="p-4 font-bold text-lg">Navigation</div>
-    <ul class="space-y-3 px-4">
+    <ul class="space-y-3 px-4 py-4">
       <li><a href="#" onclick="goTo('bible')" class="hover:underline">📖 Bible Tracker</a></li>
       <li><a href="#" onclick="goTo('prayer')" class="hover:underline">🙏 Prayer List</a></li>
       <li><a href="#" onclick="goTo('gratitude')" class="hover:underline">📝 Gratitude</a></li>
@@ -41,21 +37,15 @@
   <main class="flex flex-1 overflow-hidden">
     <!-- Book List -->
     <div id="bibleTracker" class="w-48 sm:w-60 bg-[#FDEFCC] p-3 overflow-y-auto h-screen flex-shrink-0"></div>
-    
-    <!-- Panel Wrapper -->
-    <div class="flex-1 relative overflow-y-auto">
-      <!-- Chapter Panel (default shown) -->
-      <div id="chapterPanel" class="p-4"></div>
-      <!-- Calendar Panel (default hidden) -->
-      <div id="calendarPanel" class="p-4 hidden"></div>
-    </div>
+    <!-- Chapter Panel -->
+    <div id="chapterPanel" class="flex-1 p-4 overflow-y-auto"></div>
+    <!-- Calendar Panel -->
+    <div id="calendarPanel" class="flex-1 p-4 overflow-y-auto hidden"></div>
   </main>
 
   <footer class="text-center text-sm text-[#777060] mt-4 py-4">© 2025 Day by Grace</footer>
 
-  <script src="main.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.js"></script>
-  <script src="calendar.js" defer></script>
-
+  <script src="main.js" defer></script>
 </body>
 </html>
