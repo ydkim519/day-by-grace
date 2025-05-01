@@ -7,6 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     #sideNav { top: 64px; }
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet" />
   </style>
 </head>
 <body class="bg-white text-stone-700 font-[system-ui,sf-pro-text,-apple-system,BlinkMacSystemFont,sans-serif] min-h-screen flex flex-col">
@@ -39,10 +40,14 @@
     <div id="bibleTracker" class="w-48 sm:w-60 bg-[#FDEFCC] p-3 overflow-y-auto h-screen flex-shrink-0"></div>
     <!-- Chapter Panel -->
     <div id="chapterPanel" class="flex-1 p-4 overflow-y-auto"></div>
+  <div id="calendarPanel" class="flex-1 p-4 overflow-y-auto"></div>
   </main>
 
   <footer class="text-center text-sm text-[#777060] mt-4 py-4">© 2025 Day by Grace</footer>
 
   <script src="main.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.js"></script>
+  <script src="calendar.js" defer></script>
+
 </body>
 </html>
