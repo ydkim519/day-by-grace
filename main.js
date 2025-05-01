@@ -93,3 +93,4 @@ function renderChapterPanel(book, chapters) {
 
   chapterPanel.appendChild(grid);
 }
+
