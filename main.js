@@ -40,7 +40,7 @@ function renderBibleLayout(initialBook) {
   container.innerHTML = "";
 
   const sidebar = document.createElement("div");
-  sidebar.className = "w-48 sm:w-60 bg-[#FDEFCC] p-3 overflow-y-auto h-screen flex-shrink-0";
+  sidebar.className = "w-60 sm:w-48 bg-[#FDEFCC] p-3 overflow-y-auto h-screen flex-shrink-0"; // ✅ this is the only adjustment
 
   Object.entries(bibleSections).forEach(([sectionName, books]) => {
     const sectionTitle = document.createElement("h2");
@@ -60,12 +60,13 @@ function renderBibleLayout(initialBook) {
       const percentSpan = document.createElement("span");
       percentSpan.id = `progress-${book}`;
       percentSpan.className = "text-xs text-right w-10";
+      percentSpan.textContent = "0%"; // ✅ initialize visible %
 
       bookRow.appendChild(bookBtn);
       bookRow.appendChild(percentSpan);
       sidebar.appendChild(bookRow);
 
-      updateProgress(book, chapters);
+      updateProgress(book, chapters); // ✅ ensure % is calculated
     });
   });
 
