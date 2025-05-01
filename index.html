@@ -5,55 +5,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Bible Reading Tracker</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    #sideNav {
-      top: 64px; /* aligns with header height */
-    }
-  </style>
 </head>
-<body class="bg-white text-stone-700 font-[system-ui,sf-pro-text,-apple-system,BlinkMacSystemFont,sans-serif] min-h-screen flex flex-col relative">
+<body class="bg-white text-stone-700 font-[system-ui,sf-pro-text,-apple-system,BlinkMacSystemFont,sans-serif] min-h-screen flex flex-col">
 
   <!-- Header -->
-  <header class="bg-[#BD6221] flex items-center justify-between px-4 py-4 shadow text-[#FDEFCC] relative z-10">
+  <header class="bg-[#BD6221] flex items-center justify-between px-4 py-4 shadow text-[#FDEFCC]">
     <div class="flex items-center space-x-4">
-      <button onclick="toggleNav()" class="text-[#FDEFCC] text-2xl focus:outline-none">
-        &#9776;
-      </button>
-      <h1 class="text-lg sm:text-xl font-bold tracking-wide whitespace-nowrap">Bible Reading Tracker</h1>
+      <h1 class="text-xl font-bold tracking-wide">Bible Reading Tracker</h1>
     </div>
-    <!-- Logo: small for mobile, larger hidden -->
-    <img src="day-by-grace-logo-horizontal3.png"
-         alt="Day by Grace Logo"
-         class="h-10 max-h-12 block sm:hidden" />
-    
-    <img src="day-by-grace-logo.png"
-         alt="Day by Grace Logo (Mobile)"
-         class="h-10 max-h-12 hidden sm:block" />
+    <!-- Swap logos based on screen -->
+    <img src="day-by-grace-logo-horizontal3.png" alt="Day by Grace Logo Desktop" class="h-10 max-h-12 hidden sm:block" />
+    <img src="day-by-grace-logo.png" alt="Day by Grace Logo Mobile" class="h-10 max-h-12 block sm:hidden" />
   </header>
 
-  <!-- Side Navigation -->
-  <div id="sideNav" class="fixed left-0 top-[64px] w-64 bg-[#BD6221] text-[#FDEFCC] hidden z-50 shadow-md h-screen">
-    <div class="p-4 font-bold text-lg">Navigation</div>
-    <ul class="space-y-3 px-4">
-      <li><a href="#" onclick="goTo('bible')" class="hover:underline">📖 Bible Tracker</a></li>
-      <li><a href="#" onclick="goTo('prayer')" class="hover:underline">🙏 Prayer List</a></li>
-      <li><a href="#" onclick="goTo('gratitude')" class="hover:underline">📝 Gratitude</a></li>
-      <li><a href="#" onclick="goTo('notes')" class="hover:underline">📓 Sermon Notes</a></li>
-      <li><a href="#" onclick="goTo('events')" class="hover:underline">📅 Events</a></li>
-    </ul>
-  </div>
-
-  <!-- Main Content -->
-  <main class="p-4 max-w-7xl mx-auto relative z-0">
-    <div id="bibleTracker" class="space-y-6"></div>
+  <!-- Main -->
+  <main class="flex flex-1 overflow-hidden">
+    <!-- Sidebar -->
+    <div id="bibleTracker" class="w-60 bg-[#FDEFCC] p-3 overflow-y-auto flex-shrink-0"></div>
+    <!-- Chapter panel -->
+    <div id="chapterPanel" class="flex-1 p-4 overflow-y-auto"></div>
   </main>
 
-  <!-- Footer -->
-  <footer class="text-center text-sm text-[#777060] mt-10 py-4">
+  <footer class="text-center text-sm text-[#777060] mt-4 py-4">
     © 2025 Day by Grace
   </footer>
 
-  <!-- Script -->
   <script src="main.js" defer></script>
 </body>
 </html>
