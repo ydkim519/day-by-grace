@@ -1,0 +1,23 @@
+document.addEventListener('DOMContentLoaded', function() {
+  const calendarEl = document.getElementById('calendarPanel');
+  const calendar = new FullCalendar.Calendar(calendarEl, {
+    initialView: 'dayGridMonth',
+    initialDate: new Date().toISOString().slice(0,10),
+    headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,timeGridDay' },
+    selectable: true,
+    select: function(info) {
+      const eventName = prompt('Event name:');
+      if (eventName) {
+        calendar.addEvent({
+          title: eventName,
+          start: info.startStr,
+          end: info.endStr,
+          allDay: info.allDay,
+          backgroundColor: '#BD6221'
+        });
+      }
+      calendar.unselect();
+    }
+  });
+  calendar.render();
+});
