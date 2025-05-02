@@ -4,11 +4,13 @@ fetch('koreanAudioLinks.json')
   .then(response => response.json())
   .then(data => {
     koreanAudioLinks = propagateAudioLinks(data);
-    renderBibleLayout("Genesis");
+    const lastBook = localStorage.getItem('lastBook') || "Genesis";
+    renderBibleLayout(lastBook);
   })
   .catch(err => {
     console.error("Failed to load koreanAudioLinks.json", err);
-    renderBibleLayout("Genesis");
+    const lastBook = localStorage.getItem('lastBook') || "Genesis";
+    renderBibleLayout(lastBook);
   });
 
 function propagateAudioLinks(links) {
@@ -24,8 +26,7 @@ function propagateAudioLinks(links) {
   return propagated;
 }
 
-const koreanBookCodes = {
-  Genesis: 'gen', Exodus: 'exo', Leviticus: 'lev', Numbers: 'num', Deuteronomy: 'deu',
+const koreanBookCodes = { Genesis: 'gen', Exodus: 'exo', Leviticus: 'lev', Numbers: 'num', Deuteronomy: 'deu',
   Joshua: 'jos', Judges: 'jdg', Ruth: 'rut', '1 Samuel': '1sa', '2 Samuel': '2sa',
   '1 Kings': '1ki', '2 Kings': '2ki', '1 Chronicles': '1ch', '2 Chronicles': '2ch',
   Ezra: 'ezr', Nehemiah: 'neh', Esther: 'est', Job: 'job', Psalms: 'psa',
@@ -34,8 +35,8 @@ const koreanBookCodes = {
   Hosea: 'hos', Joel: 'jol', Amos: 'amo', Obadiah: 'oba', Jonah: 'jon',
   Micah: 'mic', Nahum: 'nam', Habakkuk: 'hab', Zephaniah: 'zep',
   Haggai: 'hag', Zechariah: 'zec', Malachi: 'mal', Matthew: 'mat',
-  Mark: 'mrk', Luke: 'luk', John: 'jhn', Acts: 'act',
-  Romans: 'rom', '1 Corinthians': '1co', '2 Corinthians': '2co', Galatians: 'gal',
+  Mark: 'mrk', Luke: 'luk', John: 'jhn', Acts: 'act', Romans: 'rom',
+  '1 Corinthians': '1co', '2 Corinthians': '2co', Galatians: 'gal',
   Ephesians: 'eph', Philippians: 'php', Colossians: 'col', '1 Thessalonians': '1th',
   '2 Thessalonians': '2th', '1 Timothy': '1ti', '2 Timothy': '2ti', Titus: 'tit',
   Philemon: 'phm', Hebrews: 'heb', James: 'jas', '1 Peter': '1pe', '2 Peter': '2pe',
@@ -53,7 +54,7 @@ const bibleSections = {
   "Revelation": { Revelation: 22 }
 };
 
-function renderBibleLayout(initialBook) {
+function renderBibleLayout(selectedBook) {
   const container = document.getElementById("bibleTracker");
   container.innerHTML = "";
 
@@ -70,7 +71,10 @@ function renderBibleLayout(initialBook) {
       const bookBtn = document.createElement("button");
       bookBtn.className = "text-left text-[#777060] px-2 py-1 rounded hover:bg-[#BD6221] hover:text-[#FDEFCC] flex-grow";
       bookBtn.textContent = book;
-      bookBtn.onclick = () => renderChapterPanel(book, chapters);
+      bookBtn.onclick = () => {
+        renderChapterPanel(book, chapters);
+        localStorage.setItem('lastBook', book);
+      };
 
       const percentSpan = document.createElement("span");
       percentSpan.id = `progress-${book}`;
@@ -85,14 +89,16 @@ function renderBibleLayout(initialBook) {
     });
   });
 
-  renderChapterPanel(initialBook, bibleSections["Torah (Law)"][initialBook]);
+  renderChapterPanel(selectedBook, bibleSections[getSectionOfBook(selectedBook)][selectedBook]);
+}
+
+function getSectionOfBook(book) {
+  return Object.keys(bibleSections).find(section => Object.keys(bibleSections[section]).includes(book));
 }
 
 function renderChapterPanel(book, chapters) {
   const chapterPanel = document.getElementById("chapterPanel");
   const calendarPanel = document.getElementById("calendarPanel");
-
-  // Always show chapter panel
   chapterPanel.classList.remove("hidden");
   calendarPanel.classList.add("hidden");
 
