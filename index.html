@@ -12,7 +12,6 @@
 </head>
 <body class="bg-white text-stone-700 font-[system-ui,sf-pro-text,-apple-system,BlinkMacSystemFont,sans-serif] min-h-screen flex flex-col">
 
-  <!-- Header -->
   <header class="bg-[#BD6221] flex items-center justify-between px-4 py-4 shadow text-[#FDEFCC] relative z-10">
     <div class="flex items-center space-x-4">
       <button onclick="toggleNav()" class="text-[#FDEFCC] text-2xl focus:outline-none">&#9776;</button>
@@ -22,7 +21,6 @@
     <img src="day-by-grace-logo.png" alt="Day by Grace Logo (Mobile)" class="h-10 max-h-12 ml-auto block sm:hidden" />
   </header>
 
-  <!-- SideNav Panel -->
   <div id="sideNav" class="fixed left-0 top-[64px] w-60 bg-[#BD6221] text-[#FDEFCC] transform -translate-x-full transition-transform z-50 h-screen">
     <ul class="space-y-3 px-4 py-4">
       <li><a href="#" onclick="goTo('bible')" class="hover:underline">📖 Bible Tracker</a></li>
@@ -33,12 +31,8 @@
     </ul>
   </div>
 
-  <!-- Main Content -->
   <main class="flex flex-1 overflow-hidden">
-    <!-- Bible Tracker Sidebar -->
     <div id="bibleTracker" class="w-48 sm:w-60 bg-[#FDEFCC] p-3 overflow-y-auto h-screen flex-shrink-0"></div>
-
-    <!-- Panels -->
     <div id="chapterPanel" class="flex-1 p-4 overflow-y-auto"></div>
     <div id="calendarPanel" class="flex-1 p-4 overflow-y-auto hidden"></div>
   </main>
