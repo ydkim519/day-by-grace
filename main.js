@@ -25,8 +25,8 @@ function propagateAudioLinks(links) {
   return propagated;
 }
 
-const koreanBookCodes = { /* same mappings as before */ };
-const bibleSections = { /* same mappings as before */ };
+const koreanBookCodes = { /* your existing mapping here (same as before) */ };
+const bibleSections = { /* your existing mapping here (same as before) */ };
 
 function renderBibleLayout(initialBook) {
   const container = document.getElementById("bibleTracker");
@@ -159,34 +159,29 @@ function goTo(section) {
   const chapterPanel = document.getElementById("chapterPanel");
   const calendarPanel = document.getElementById("calendarPanel");
 
-  if (section === 'bible') {
-    chapterPanel.style.display = "block";
-    calendarPanel.style.display = "none";
-  } else if (section === 'events') {
-    chapterPanel.style.display = "none";
-    calendarPanel.style.display = "block";
+  chapterPanel.style.display = (section === 'bible') ? "block" : "none";
+  calendarPanel.style.display = (section === 'events') ? "block" : "none";
 
-    if (!calendarInstance) {
-      calendarInstance = new FullCalendar.Calendar(calendarPanel, {
-        initialView: 'dayGridMonth',
-        headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,timeGridDay' },
-        selectable: true,
-        select: function(info) {
-          const eventName = prompt('Event name:');
-          if (eventName) {
-            calendarInstance.addEvent({
-              title: eventName,
-              start: info.startStr,
-              end: info.endStr,
-              allDay: info.allDay,
-              backgroundColor: '#BD6221'
-            });
-          }
-          calendarInstance.unselect();
+  if (section === 'events' && !calendarInstance) {
+    calendarInstance = new FullCalendar.Calendar(calendarPanel, {
+      initialView: 'dayGridMonth',
+      headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,timeGridDay' },
+      selectable: true,
+      select: function(info) {
+        const eventName = prompt('Event name:');
+        if (eventName) {
+          calendarInstance.addEvent({
+            title: eventName,
+            start: info.startStr,
+            end: info.endStr,
+            allDay: info.allDay,
+            backgroundColor: '#BD6221'
+          });
         }
-      });
-      calendarInstance.render();
-    }
+        calendarInstance.unselect();
+      }
+    });
+    calendarInstance.render();
   }
 
   toggleNav();
