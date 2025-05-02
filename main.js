@@ -1,5 +1,4 @@
 let koreanAudioLinks = {};
-let calendarInstance = null;
 
 fetch('koreanAudioLinks.json')
   .then(response => response.json())
@@ -25,8 +24,34 @@ function propagateAudioLinks(links) {
   return propagated;
 }
 
-const koreanBookCodes = { /* your existing mapping here (same as before) */ };
-const bibleSections = { /* your existing mapping here (same as before) */ };
+const koreanBookCodes = {
+  Genesis: 'gen', Exodus: 'exo', Leviticus: 'lev', Numbers: 'num', Deuteronomy: 'deu',
+  Joshua: 'jos', Judges: 'jdg', Ruth: 'rut', '1 Samuel': '1sa', '2 Samuel': '2sa',
+  '1 Kings': '1ki', '2 Kings': '2ki', '1 Chronicles': '1ch', '2 Chronicles': '2ch',
+  Ezra: 'ezr', Nehemiah: 'neh', Esther: 'est', Job: 'job', Psalms: 'psa',
+  Proverbs: 'pro', Ecclesiastes: 'ecc', 'Song of Solomon': 'sng', Isaiah: 'isa',
+  Jeremiah: 'jer', Lamentations: 'lam', Ezekiel: 'ezk', Daniel: 'dan',
+  Hosea: 'hos', Joel: 'jol', Amos: 'amo', Obadiah: 'oba', Jonah: 'jon',
+  Micah: 'mic', Nahum: 'nam', Habakkuk: 'hab', Zephaniah: 'zep',
+  Haggai: 'hag', Zechariah: 'zec', Malachi: 'mal', Matthew: 'mat',
+  Mark: 'mrk', Luke: 'luk', John: 'jhn', Acts: 'act',
+  Romans: 'rom', '1 Corinthians': '1co', '2 Corinthians': '2co', Galatians: 'gal',
+  Ephesians: 'eph', Philippians: 'php', Colossians: 'col', '1 Thessalonians': '1th',
+  '2 Thessalonians': '2th', '1 Timothy': '1ti', '2 Timothy': '2ti', Titus: 'tit',
+  Philemon: 'phm', Hebrews: 'heb', James: 'jas', '1 Peter': '1pe', '2 Peter': '2pe',
+  '1 John': '1jn', '2 John': '2jn', '3 John': '3jn', Jude: 'jud', Revelation: 'rev'
+};
+
+const bibleSections = {
+  "Torah (Law)": { Genesis: 50, Exodus: 40, Leviticus: 27, Numbers: 36, Deuteronomy: 34 },
+  "History": { Joshua: 24, Judges: 21, Ruth: 4, "1 Samuel": 31, "2 Samuel": 24, "1 Kings": 22, "2 Kings": 25, "1 Chronicles": 29, "2 Chronicles": 36, Ezra: 10, Nehemiah: 13, Esther: 10 },
+  "Wisdom": { Job: 42, Psalms: 150, Proverbs: 31, Ecclesiastes: 12, "Song of Solomon": 8 },
+  "Major Prophets": { Isaiah: 66, Jeremiah: 52, Lamentations: 5, Ezekiel: 48, Daniel: 12 },
+  "Minor Prophets": { Hosea: 14, Joel: 3, Amos: 9, Obadiah: 1, Jonah: 4, Micah: 7, Nahum: 3, Habakkuk: 3, Zephaniah: 3, Haggai: 2, Zechariah: 14, Malachi: 4 },
+  "Gospels & Acts": { Matthew: 28, Mark: 16, Luke: 24, John: 21, Acts: 28 },
+  "Letters": { Romans: 16, "1 Corinthians": 16, "2 Corinthians": 13, Galatians: 6, Ephesians: 6, Philippians: 4, Colossians: 4, "1 Thessalonians": 5, "2 Thessalonians": 3, "1 Timothy": 6, "2 Timothy": 4, Titus: 3, Philemon: 1, Hebrews: 13, James: 5, "1 Peter": 5, "2 Peter": 3, "1 John": 5, "2 John": 1, "3 John": 1, Jude: 1 },
+  "Revelation": { Revelation: 22 }
+};
 
 function renderBibleLayout(initialBook) {
   const container = document.getElementById("bibleTracker");
@@ -67,8 +92,8 @@ function renderChapterPanel(book, chapters) {
   const chapterPanel = document.getElementById("chapterPanel");
   const calendarPanel = document.getElementById("calendarPanel");
 
-  chapterPanel.style.display = "block";
-  calendarPanel.style.display = "none";
+  chapterPanel.classList.remove("hidden");
+  calendarPanel.classList.add("hidden");
 
   chapterPanel.innerHTML = "";
 
@@ -102,6 +127,7 @@ function renderChapterPanel(book, chapters) {
     const links = document.createElement("div");
     links.className = "flex gap-1 items-center ml-1";
 
+    // ✅ ENG (ESV link)
     const esv = document.createElement("a");
     esv.href = `https://www.esv.org/${book.replace(/\s+/g, '+')}+${i}/`;
     esv.target = "_blank";
@@ -109,6 +135,7 @@ function renderChapterPanel(book, chapters) {
 
     links.appendChild(esv);
 
+    // ✅ KOR (bskorea link)
     const korCode = koreanBookCodes[book];
     if (korCode) {
       const korLink = document.createElement("a");
@@ -118,6 +145,7 @@ function renderChapterPanel(book, chapters) {
       links.appendChild(korLink);
     }
 
+    // ✅ Audio 🎧
     const audio = koreanAudioLinks?.[book]?.[i];
     if (audio) {
       const link = document.createElement("a");
@@ -155,33 +183,40 @@ function updateProgress(book, total) {
   if (el) el.textContent = `${percent}%`;
 }
 
+let calendarInstance = null;
+
 function goTo(section) {
   const chapterPanel = document.getElementById("chapterPanel");
   const calendarPanel = document.getElementById("calendarPanel");
 
-  chapterPanel.style.display = (section === 'bible') ? "block" : "none";
-  calendarPanel.style.display = (section === 'events') ? "block" : "none";
+  if (section === 'bible') {
+    chapterPanel.classList.remove('hidden');
+    calendarPanel.classList.add('hidden');
+  } else if (section === 'events') {
+    chapterPanel.classList.add('hidden');
+    calendarPanel.classList.remove('hidden');
 
-  if (section === 'events' && !calendarInstance) {
-    calendarInstance = new FullCalendar.Calendar(calendarPanel, {
-      initialView: 'dayGridMonth',
-      headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,timeGridDay' },
-      selectable: true,
-      select: function(info) {
-        const eventName = prompt('Event name:');
-        if (eventName) {
-          calendarInstance.addEvent({
-            title: eventName,
-            start: info.startStr,
-            end: info.endStr,
-            allDay: info.allDay,
-            backgroundColor: '#BD6221'
-          });
+    if (!calendarInstance) {
+      calendarInstance = new FullCalendar.Calendar(calendarPanel, {
+        initialView: 'dayGridMonth',
+        headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,timeGridDay' },
+        selectable: true,
+        select: function (info) {
+          const eventName = prompt('Event name:');
+          if (eventName) {
+            calendarInstance.addEvent({
+              title: eventName,
+              start: info.startStr,
+              end: info.endStr,
+              allDay: info.allDay,
+              backgroundColor: '#BD6221'
+            });
+          }
+          calendarInstance.unselect();
         }
-        calendarInstance.unselect();
-      }
-    });
-    calendarInstance.render();
+      });
+      calendarInstance.render();
+    }
   }
 
   toggleNav();
