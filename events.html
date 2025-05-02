@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Events Calendar</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet" />
+</head>
+<body class="bg-white text-stone-700 font-sans min-h-screen flex flex-col">
+  <header class="bg-[#BD6221] flex items-center justify-between px-4 py-4 text-[#FDEFCC]">
+    <h1 class="text-xl font-bold">Events</h1>
+    <nav>
+      <a href="bible-tracker.html" class="ml-4 text-[#FDEFCC] hover:underline">Bible Tracker</a>
+    </nav>
+  </header>
+
+  <main class="flex-1 p-4">
+    <div id="calendarPanel" class="w-full min-h-[600px]"></div>
+  </main>
+
+  <footer class="text-center text-sm text-[#777060] py-4">© 2025 Day by Grace</footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.js"></script>
+  <script src="calendar.js"></script>
+</body>
+</html>
