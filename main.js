@@ -1,5 +1,5 @@
 let koreanAudioLinks = {};
-let calendarInstance = null;  // ✅ keep calendar globally
+let calendarInstance = null;
 
 fetch('koreanAudioLinks.json')
   .then(response => response.json())
@@ -25,8 +25,8 @@ function propagateAudioLinks(links) {
   return propagated;
 }
 
-const koreanBookCodes = { /* unchanged mappings */ };
-const bibleSections = { /* unchanged mappings */ };
+const koreanBookCodes = { /* same mappings as before */ };
+const bibleSections = { /* same mappings as before */ };
 
 function renderBibleLayout(initialBook) {
   const container = document.getElementById("bibleTracker");
@@ -67,8 +67,8 @@ function renderChapterPanel(book, chapters) {
   const chapterPanel = document.getElementById("chapterPanel");
   const calendarPanel = document.getElementById("calendarPanel");
 
-  chapterPanel.classList.remove("hidden");
-  calendarPanel.classList.add("hidden");
+  chapterPanel.style.display = "block";
+  calendarPanel.style.display = "none";
 
   chapterPanel.innerHTML = "";
 
@@ -160,18 +160,18 @@ function goTo(section) {
   const calendarPanel = document.getElementById("calendarPanel");
 
   if (section === 'bible') {
-    chapterPanel.classList.remove("hidden");
-    calendarPanel.classList.add("hidden");
+    chapterPanel.style.display = "block";
+    calendarPanel.style.display = "none";
   } else if (section === 'events') {
-    chapterPanel.classList.add("hidden");
-    calendarPanel.classList.remove("hidden");
+    chapterPanel.style.display = "none";
+    calendarPanel.style.display = "block";
 
     if (!calendarInstance) {
       calendarInstance = new FullCalendar.Calendar(calendarPanel, {
         initialView: 'dayGridMonth',
         headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,timeGridDay' },
         selectable: true,
-        select: function (info) {
+        select: function(info) {
           const eventName = prompt('Event name:');
           if (eventName) {
             calendarInstance.addEvent({
