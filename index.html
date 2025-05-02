@@ -23,18 +23,17 @@
   <div id="sideNav" class="fixed left-0 top-[64px] w-60 bg-[#BD6221] text-[#FDEFCC] transform -translate-x-full transition-transform z-50 h-screen">
     <ul class="space-y-3 px-4 py-4">
       <li><a href="#" onclick="goTo('bible')" class="hover:underline">📖 Bible Tracker</a></li>
+      <li><a href="#" onclick="goTo('prayer')" class="hover:underline">🙏 Prayer List</a></li>
+      <li><a href="#" onclick="goTo('gratitude')" class="hover:underline">📝 Gratitude</a></li>
+      <li><a href="#" onclick="goTo('notes')" class="hover:underline">📓 Sermon Notes</a></li>
       <li><a href="#" onclick="goTo('events')" class="hover:underline">📅 Events</a></li>
-      <!-- Add more nav items here -->
     </ul>
   </div>
 
   <!-- Main Content -->
   <main class="flex flex-1 overflow-hidden">
-    <!-- Book List -->
     <div id="bibleTracker" class="w-48 sm:w-60 bg-[#FDEFCC] p-3 overflow-y-auto h-screen flex-shrink-0"></div>
-    <!-- Chapter Panel -->
     <div id="chapterPanel" class="flex-1 p-4 overflow-y-auto"></div>
-    <!-- Calendar Panel -->
     <div id="calendarPanel" class="flex-1 p-4 overflow-y-auto" style="display: none;"></div>
   </main>
 
